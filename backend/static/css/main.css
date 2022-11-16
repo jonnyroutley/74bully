@@ -1,18 +1,19 @@
 /* global */
 body {
     font-family: 'Open Sans', sans-serif;
-    /* background-color: rgb(228, 234, 238); */
-    background-color: #80FF33;
-    text-align: center;
+    background-color: rgb(228, 234, 238);
+    margin:0;
 }
 
 .content {
     margin: 0 auto;
     width: 400px;
+    max-width: 100%;
 }
 
 .home {
     margin: 0 auto;
+    background-color: #80FF33;
 }
 
 table, td, th {
