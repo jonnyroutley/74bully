@@ -1,14 +1,20 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from datetime import datetime
+from dataclasses import dataclass
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-with app.app_context():
-    db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+        'sqlite:///' + os.path.join(basedir, 'test.db')
+# with app.app_context():
+db = SQLAlchemy(app)
 
+@dataclass
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
@@ -67,11 +73,14 @@ def tasklist():
 
     else:
         tasks = Todo.query.order_by(Todo.date_created).all()
+        print(tasks)
         # return render_template('tasklist.html', tasks=tasks)
-        my_tasks = {
-            "hi": "this is coool",
-        }
-        return my_tasks
+        # my_tasks = {
+        #     "hi": "this is coool",
+        # }
+        return tasks
+
+
 
 
 @app.route('/houserules/')
