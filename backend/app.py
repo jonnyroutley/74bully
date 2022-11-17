@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from datetime import datetime
+import json
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -66,7 +67,9 @@ def update(id):
 def tasklist():
     # return render_template('tasklist.html')
     if request.method == 'POST':
-        task_content = request.form['content']
+        data = request.get_data()
+        data = json.loads(data)
+        task_content = data["content"]
         new_task = Todo(content=task_content)
 
         try:
