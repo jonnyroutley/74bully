@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 with app.app_context():
     db = SQLAlchemy(app)
@@ -65,7 +67,11 @@ def tasklist():
 
     else:
         tasks = Todo.query.order_by(Todo.date_created).all()
-        return render_template('tasklist.html', tasks=tasks)
+        # return render_template('tasklist.html', tasks=tasks)
+        my_tasks = {
+            "hi": "this is coool",
+        }
+        return my_tasks
 
 
 @app.route('/houserules/')
