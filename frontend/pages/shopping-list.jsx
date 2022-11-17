@@ -4,14 +4,16 @@ import styles from '../styles/Home.module.scss'
 
 
 const ShoppingList = () => {
-  const [tasks, setTasks] = useState({})
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch('http://localhost:5000/tasklist/');
       let data = await res.json()
-      console.log(data)
-      setTasks(data)
+      console.log(data.tasks)
+      setTasks(data.tasks)
+      setLoading(false)
     }
   
     // call the function
@@ -24,8 +26,16 @@ const ShoppingList = () => {
     <Layout>
       <main className={styles.main}>
         <h1>Shopping List</h1>
-        <h2>{tasks.hi}</h2>
-        <p>{tasks.hi}</p>
+        {loading ?
+        <>
+        <p>Loading...</p>
+        </>:
+        <>
+        {tasks.map((task) => (
+          <p key={task.id}>{task.content}</p>
+        ))}
+        </>
+      }
 
       </main>
     </Layout>

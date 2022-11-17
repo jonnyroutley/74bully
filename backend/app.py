@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from datetime import datetime
-from dataclasses import dataclass
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -13,8 +13,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] =\
         'sqlite:///' + os.path.join(basedir, 'test.db')
 # with app.app_context():
 db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
-@dataclass
+# Create Schema for SQLAlchemy ie the database
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
@@ -23,10 +24,14 @@ class Todo(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.id
 
+# Create a Schema to be used by marrshmallow for serialisation
+class TodoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Todo
+
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/tasklist/delete/<int:id>')
 def delete(id):
@@ -73,14 +78,29 @@ def tasklist():
 
     else:
         tasks = Todo.query.order_by(Todo.date_created).all()
-        print(tasks)
-        # return render_template('tasklist.html', tasks=tasks)
-        # my_tasks = {
-        #     "hi": "this is coool",
-        # }
-        return tasks
+        task_schema = TodoSchema(many=True)
+        output = task_schema.dump(tasks)
 
+        return {"tasks": output}
 
+# Keep to display data for testing
+@app.route('/tasklistshow/', methods=['POST', 'GET'])
+def tasklistshow():
+    # return render_template('tasklist.html')
+    if request.method == 'POST':
+        task_content = request.form['content']
+        new_task = Todo(content=task_content)
+
+        try:
+            db.session.add(new_task)
+            db.session.commit()
+            return redirect('/tasklist/')
+        except:
+            return 'There was an issue adding your task'
+
+    else:
+        tasks = Todo.query.order_by(Todo.date_created).all()
+        return render_template('tasklist.html', tasks=tasks)
 
 
 @app.route('/houserules/')
