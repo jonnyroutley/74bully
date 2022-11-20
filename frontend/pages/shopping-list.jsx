@@ -11,7 +11,7 @@ const ShoppingList = () => {
   const [newTask, setNewTask] = useState()
 
   const fetchData = async () => {
-    const res = await fetch('http://localhost:5000/tasklist/');
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/tasklist/');
     let data = await res.json()
     setTasks(data.tasks)
     setLoading(false)
@@ -28,7 +28,7 @@ const ShoppingList = () => {
   const createTask = async (e) => {
     e.preventDefault()
     try {
-      let res = await fetch("http://localhost:5000/tasklist/", {
+      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/tasklist/", {
         method: "POST",
         body: JSON.stringify({
           content: newTask
