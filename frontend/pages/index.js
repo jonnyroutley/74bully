@@ -22,7 +22,7 @@ const Home = () => {
 
       <main className={styles.main}>
         <MyComponent
-          my_name="Fraser"
+          my_name="Jonny"
         />
         <h1></h1>
       </main>
