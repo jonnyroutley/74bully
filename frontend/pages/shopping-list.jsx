@@ -64,7 +64,7 @@ const ShoppingList = () => {
   }
 
   return (
-    <Layout>
+    <Layout metas={{title: "Shopping List"}}>
         <Heading>Shopping List</Heading>
         <Text my={2}>Ayo pick this up</Text>
         <form onSubmit={createTask} method="POST">

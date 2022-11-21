@@ -9,6 +9,7 @@ Project to make a house dashboard using Flask
 - House rules
 - Shopping list
 - Bins
+- Click if you finished a toilet roll
 
 ## Development
 
