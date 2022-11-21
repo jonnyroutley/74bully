@@ -54,7 +54,7 @@ const ShoppingList = () => {
       // Remove manually so that it is quick!
       let remaining = removeObjectWithId([...tasks], id);
       setTasks(remaining)
-      let res = await fetch("http://localhost:5000/tasklist/delete/" + id);
+      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/tasklist/delete/" + id);
       if (res.status === 200) {
         fetchData()
       }
