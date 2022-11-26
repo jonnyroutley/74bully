@@ -12,7 +12,7 @@ def SendNotification(title, message, dev=False):
   icon = 15 if dev else 136
 
   if dev:
-    title = "({}) {}".format(os.getlogin(), title)
+    title = "({}) {}".format("74Bully.com", title)
 
   if private_key is None:
     raise ConnectionError("No private key")

@@ -14,9 +14,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s %(message)s',
     datefmt='%m/%d/%Y %I:%M:%S %p'
-    )
-
-
+)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -77,7 +75,6 @@ def update(id):
     except:
         return 'There was an issue updating your task', 500
 
-
 @app.route('/tasklist/', methods=['GET'])
 def tasklist():
     tasks = ShoppingItem.query.order_by(ShoppingItem.date_created).all()
@@ -119,7 +116,6 @@ def tasklistshow():
         tasks = ShoppingItem.query.order_by(ShoppingItem.date_created).all()
         return render_template('tasklist.html', tasks=tasks)
 
-
 @app.route('/houserules/')
 def houserules():
     return render_template("houserules.html")
@@ -133,7 +129,7 @@ def announcement():
         title = data['title']
         message = data['message']
         t = "[{}] {}".format(sender, title)
-        notifications.SendNotification(t, message, True)
+        notifications.SendNotification(t, message, False)
         return "Notification Sent", 200 
     except Exception as e:
         logging.exception(e)
@@ -144,7 +140,5 @@ def senders():
     senders = ['Jonny', 'Fraser', 'Doug', 'Mia']
     return {"senders": senders}
 
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
