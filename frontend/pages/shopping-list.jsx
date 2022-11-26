@@ -8,7 +8,7 @@ import styles from '../styles/Home.module.scss'
 const ShoppingList = () => {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
-  const [newTask, setNewTask] = useState()
+  const [newTask, setNewTask] = useState("")
 
   const fetchData = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/tasklist/');
