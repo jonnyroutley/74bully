@@ -13,7 +13,7 @@ const Announcements = () => {
   const [message, setMessage] = useState("")
 
   const fetchSenders = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/announcements/senders/');
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/announcements/senders');
     let data = await res.json()
     setSenders(data.senders)
     setLoading(false)
@@ -30,7 +30,7 @@ const Announcements = () => {
   const makeAnnouncement = async (e) => {
     e.preventDefault()
     try {
-      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/announcements/", {
+      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/announcements", {
         method: "POST",
         body: JSON.stringify({
           sender: sender,
