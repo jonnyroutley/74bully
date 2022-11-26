@@ -5,6 +5,7 @@ from flask_cors import CORS
 from datetime import datetime
 import json
 import os
+import notifications
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -109,6 +110,24 @@ def tasklistshow():
 @app.route('/houserules/')
 def houserules():
     return render_template("houserules.html")
+
+@app.route('/announcements/', methods=['POST'])
+def announcement():
+    data = request.get_data()
+    data = json.loads(data)
+    sender = data['sender']
+    title = data['title']
+    message = data['message']
+    t = "[{}] {}".format(sender, title)
+    notifications.SendNotification(t, message, True)
+    return "Notification Sent", 200 
+
+@app.route('/announcements/senders/', methods=['GET'])
+def senders():
+    senders = ['Jonny', 'Fraser', 'Doug', 'Mia']
+    return {"senders": senders}
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
