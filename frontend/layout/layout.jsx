@@ -14,6 +14,7 @@ export default function Layout({ metas, children }) {
         <Box p={5} bg={'rgb(128,255,51)'} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
           <Heading>74 Bully Household</Heading>
           <Box>
+            <Link p={1} href={'/announcements'}>Make Announcement</Link>
             <Link p={1} href={'/shopping-list'}>Shopping List</Link>
             <Link p={1} href={'/house-rules'}>House Rules</Link>
           </Box>

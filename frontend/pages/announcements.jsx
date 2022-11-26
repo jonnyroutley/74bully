@@ -56,7 +56,7 @@ const Announcements = () => {
         <Heading>Announcements</Heading>
         <Text my={2}>🔔 Notification Time 🔔</Text>
         <form onSubmit={makeAnnouncement} method="POST">
-          <Box display={'flex'} mb={2}>
+          <Box display={'flex'} mb={2} flexDir={'column'}>
             <Select
               name="sender"
               id="sender"
@@ -64,13 +64,12 @@ const Announcements = () => {
               onChange={(e) => setSender(e.target.value)}
               value={sender}
               placeholder={"Set Sender"}
-              marginRight={1}
+              my={1}
               required
             >
               {senders.map((sender) => (
                 <option key={sender} value={sender}>{sender}</option>
               ))}
-
             </Select>
             <Input
               type="text"
@@ -80,7 +79,7 @@ const Announcements = () => {
               onChange={(e) => setTitle(e.target.value)}
               value={title}
               placeholder={"Add Title"}
-              marginRight={1}
+              my={1}
               required
             />
             <Input
@@ -91,10 +90,10 @@ const Announcements = () => {
               onChange={(e) => setMessage(e.target.value)}
               value={message}
               placeholder={"Add Message"}
-              marginRight={1}
+              my={1}
               required
             />
-            <Button type="submit">Send</Button>
+            <Button type="submit" colorScheme={'teal'} my={1}>Send</Button>
           </Box>
         </form>
     </Layout>
