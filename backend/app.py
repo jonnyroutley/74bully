@@ -6,6 +6,17 @@ from datetime import datetime
 import json
 import os
 import notifications
+import logging
+
+logging.basicConfig(
+    filename="log.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format='%(asctime)s %(message)s',
+    datefmt='%m/%d/%Y %I:%M:%S %p'
+    )
+
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -115,14 +126,18 @@ def houserules():
 
 @app.route('/announcements/', methods=['POST'])
 def announcement():
-    data = request.get_data()
-    data = json.loads(data)
-    sender = data['sender']
-    title = data['title']
-    message = data['message']
-    t = "[{}] {}".format(sender, title)
-    notifications.SendNotification(t, message, True)
-    return "Notification Sent", 200 
+    try:
+        data = request.get_data()
+        data = json.loads(data)
+        sender = data['sender']
+        title = data['title']
+        message = data['message']
+        t = "[{}] {}".format(sender, title)
+        notifications.SendNotification(t, message, True)
+        return "Notification Sent", 200 
+    except Exception as e:
+        logging.exception(e)
+        return "Bad", 500
 
 @app.route('/announcements/senders/', methods=['GET'])
 def senders():
