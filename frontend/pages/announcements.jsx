@@ -1,4 +1,4 @@
-import { Button, Heading, Box, Spinner, Center, Text, Input, Select} from "@chakra-ui/react"
+import { Button, Heading, Box, Spinner, Center, Text, Input, Select, Textarea} from "@chakra-ui/react"
 import { CheckIcon, CloseIcon, SmallAddIcon } from "@chakra-ui/icons"
 import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
@@ -11,6 +11,7 @@ const Announcements = () => {
   const [sender, setSender] = useState("")
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const fetchSenders = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/announcements/senders');
@@ -30,6 +31,7 @@ const Announcements = () => {
   const makeAnnouncement = async (e) => {
     e.preventDefault()
     try {
+      setIsSubmitting(true)
       let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/announcements", {
         method: "POST",
         body: JSON.stringify({
@@ -49,53 +51,59 @@ const Announcements = () => {
     } catch (err) {
       console.log(err);
     }
+    setIsSubmitting(false)
+
   }
 
   return (
     <Layout metas={{title: "Announcements"}}>
         <Heading>Announcements</Heading>
         <Text my={2}>🔔 Notification Time 🔔</Text>
-        <form onSubmit={makeAnnouncement} method="POST">
-          <Box display={'flex'} mb={2} flexDir={'column'}>
-            <Select
-              name="sender"
-              id="sender"
-              bg={'white'}
-              onChange={(e) => setSender(e.target.value)}
-              value={sender}
-              placeholder={"Set Sender"}
-              my={1}
-              required
-            >
-              {senders.map((sender) => (
-                <option key={sender} value={sender}>{sender}</option>
-              ))}
-            </Select>
-            <Input
-              type="text"
-              name="title"
-              id="title"
-              bg={'white'}
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-              placeholder={"Add Title"}
-              my={1}
-              required
-            />
-            <Input
-              type="text"
-              name="message"
-              id="message"
-              bg={'white'}
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
-              placeholder={"Add Message"}
-              my={1}
-              required
-            />
-            <Button type="submit" colorScheme={'teal'} my={1}>Send</Button>
-          </Box>
-        </form>
+        {
+          !loading && 
+        
+          <form onSubmit={makeAnnouncement} method="POST">
+            <Box display={'flex'} mb={2} flexDir={'column'}>
+              <Select
+                name="sender"
+                id="sender"
+                bg={'white'}
+                onChange={(e) => setSender(e.target.value)}
+                value={sender}
+                placeholder={"Set Sender"}
+                my={1}
+                required
+              >
+                {senders.map((sender) => (
+                  <option key={sender} value={sender}>{sender}</option>
+                ))}
+              </Select>
+              <Input
+                type="text"
+                name="title"
+                id="title"
+                bg={'white'}
+                onChange={(e) => setTitle(e.target.value)}
+                value={title}
+                placeholder={"Add Title"}
+                my={1}
+                required
+              />
+              <Textarea
+                type="text"
+                name="message"
+                id="message"
+                bg={'white'}
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
+                placeholder={"Add Message"}
+                my={1}
+                required
+              />
+              <Button type="submit" colorScheme={'teal'} my={1} isLoading={isSubmitting}>Send</Button>
+            </Box>
+          </form>
+        }
     </Layout>
   )
 }
