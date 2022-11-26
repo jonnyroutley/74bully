@@ -11,24 +11,26 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] =\
-        'sqlite:///' + os.path.join(basedir, 'test.db')
-# with app.app_context():
+        'sqlite:///' + os.path.join(basedir, 'house.db')
+
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # Create Schema for SQLAlchemy ie the database
-class Todo(db.Model):
+class ShoppingItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_updated = db.Column(db.DateTime, default=datetime.utcnow)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return '<Item %r>' % self.id
 
 # Create a Schema to be used by marrshmallow for serialisation
-class TodoSchema(ma.SQLAlchemyAutoSchema):
+class ShoppingItemSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Todo
+        model = ShoppingItem
 
 @app.route('/')
 def index():
@@ -36,7 +38,7 @@ def index():
 
 @app.route('/tasklist/delete/<int:id>')
 def delete(id):
-    task_to_delete = Todo.query.get_or_404(id)
+    task_to_delete = ShoppingItem.query.get_or_404(id)
 
     try:
         db.session.delete(task_to_delete)
@@ -46,45 +48,45 @@ def delete(id):
     except:
         return 'There was a problem deleting that task'
 
-@app.route('/tasklist/update/<int:id>', methods=['GET', 'POST'])
+@app.route('/tasklist/update/<int:id>', methods=['POST'])
 def update(id):
-    task = Todo.query.get_or_404(id)
+    task = ShoppingItem.query.get_or_404(id)
 
-    if request.method == 'POST':
-        task.content = request.form['content']
+    data = request.get_data()
+    data = json.loads(data)
+    # task.content = data['content']
+    task.completed = data['completed']
+    task.date_updated = datetime.utcnow()
 
-        try:
-            db.session.commit()
-            return redirect('/tasklist/')
+    try:
+        db.session.commit()
+        return "Updated your item!", 200
 
-        except:
-            return 'There was an issue updating your task'
+    except:
+        return 'There was an issue updating your task', 500
 
-    else:
-        return render_template('update.html', task=task)
 
-@app.route('/tasklist/', methods=['POST', 'GET'])
+@app.route('/tasklist/', methods=['GET'])
 def tasklist():
-    # return render_template('tasklist.html')
-    if request.method == 'POST':
-        data = request.get_data()
-        data = json.loads(data)
-        task_content = data["content"]
-        new_task = Todo(content=task_content)
+    tasks = ShoppingItem.query.order_by(ShoppingItem.date_created).all()
+    task_schema = ShoppingItemSchema(many=True)
+    output = task_schema.dump(tasks)
 
-        try:
-            db.session.add(new_task)
-            db.session.commit()
-            return redirect('/tasklist/')
-        except:
-            return 'There was an issue adding your task'
+    return {"tasks": output}
 
-    else:
-        tasks = Todo.query.order_by(Todo.date_created).all()
-        task_schema = TodoSchema(many=True)
-        output = task_schema.dump(tasks)
+@app.route("/tasklist/create/", methods=['POST'])
+def tasklistadd():
+    data = request.get_data()
+    data = json.loads(data)
+    shopping_item = data['content']
+    new_item = ShoppingItem(content=shopping_item)
 
-        return {"tasks": output}
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return "Added item to shopping list", 200
+    except:
+        return "Issue adding that item to the shopping list", 500
 
 # Keep to display data for testing
 @app.route('/tasklistshow/', methods=['POST', 'GET'])
@@ -92,7 +94,7 @@ def tasklistshow():
     # return render_template('tasklist.html')
     if request.method == 'POST':
         task_content = request.form['content']
-        new_task = Todo(content=task_content)
+        new_task = ShoppingItem(content=task_content)
 
         try:
             db.session.add(new_task)
@@ -102,7 +104,7 @@ def tasklistshow():
             return 'There was an issue adding your task'
 
     else:
-        tasks = Todo.query.order_by(Todo.date_created).all()
+        tasks = ShoppingItem.query.order_by(ShoppingItem.date_created).all()
         return render_template('tasklist.html', tasks=tasks)
 
 

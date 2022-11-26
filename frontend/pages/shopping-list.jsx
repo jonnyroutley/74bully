@@ -8,7 +8,7 @@ import styles from '../styles/Home.module.scss'
 const ShoppingList = () => {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
-  const [newTask, setNewTask] = useState()
+  const [newTask, setNewTask] = useState("")
 
   const fetchData = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/tasklist/');
@@ -18,7 +18,6 @@ const ShoppingList = () => {
   }
 
   useEffect(() => {
-  
     // call the function
     fetchData()
       // make sure to catch any error
@@ -28,7 +27,7 @@ const ShoppingList = () => {
   const createTask = async (e) => {
     e.preventDefault()
     try {
-      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/tasklist/", {
+      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/tasklist/create", {
         method: "POST",
         body: JSON.stringify({
           content: newTask
@@ -57,6 +56,22 @@ const ShoppingList = () => {
       let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/tasklist/delete/" + id);
       if (res.status === 200) {
         fetchData()
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const updateTask = async (id, completed) => {
+    try {
+      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/tasklist/update/" + id, {
+        method: "POST",
+        body: JSON.stringify({
+          completed
+        })
+      });
+      if (res.status === 200) {
+        fetchData();
       }
     } catch (err) {
       console.log(err);
@@ -92,9 +107,23 @@ const ShoppingList = () => {
         <Box w={'600px'} maxW={'100%'} bg={'white'} boxShadow={'md'} borderRadius={'10px'} p={2} px={4}>
           {tasks.map((task) => (
             <Box key={task.id} display={'flex'} justifyContent={'space-between'} py={2} borderBottom={'1px solid'} borderColor={'gray.400'}>
-              <Text><SmallAddIcon/>{task.content}</Text>
+              <Text>
+                {
+                  task.completed ?
+                  <CheckIcon marginRight={2}/>
+                  :
+                  <CloseIcon w={3} marginRight={3}/>
+                }
+                {task.content}
+              </Text>
               <Box>
-                <Button colorScheme='teal' size={'xs'} leftIcon={<CheckIcon/>} mx={1}>Complete</Button>
+                {task.completed ?
+                <>
+                  <Button colorScheme='gray' size={'xs'} onClick={() => updateTask(task.id, false)} mx={1}>Undo</Button>
+                </>:
+                <>
+                  <Button colorScheme='teal' size={'xs'} leftIcon={<CheckIcon/>} onClick={() => updateTask(task.id, true)} mx={1}>Complete</Button>
+                </>}
                 <Button colorScheme='red' size={'xs'} mx={1} onClick={() => deleteTask(task.id)}><CloseIcon /></Button>
               </Box>
             </Box>
