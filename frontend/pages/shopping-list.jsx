@@ -91,7 +91,7 @@ const ShoppingList = () => {
               bg={'white'}
               onChange={(e) => setNewTask(e.target.value)}
               value={newTask}
-              placeholder={"New task"}
+              placeholder={"New item"}
               marginRight={1}
             />
             <Button type="submit">Create</Button>
