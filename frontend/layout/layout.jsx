@@ -10,8 +10,8 @@ export default function Layout({ metas, children }) {
         <meta name="description" content="The 74 Bully House Dashboard" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box h={"100vh"} bg={"gray.200"}>
-        <Box p={5} bg={'rgb(128,255,51)'} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+      <Box h={"100vh"} bg={"rgb(128,255,51)"}>
+        <Box p={5} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
           <Heading>74 Bully Household</Heading>
           <Box>
             <Link p={1} href={'/shopping-list'}>Shopping List</Link>
