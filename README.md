@@ -11,6 +11,14 @@ Project to make a house dashboard using Flask
 - Bins
 - Click if you finished a toilet roll
 
+## To-do:
+[ ] Use Chakra-ui themes
+[ ] Change announcement notification icon in pushsafer
+[ ] Update rules
+[ ] Add bins page
+[ ] Update links on index page/make animals buttons
+[ ] Make generally more gaudy
+
 ## Development
 
 ```bash
