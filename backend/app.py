@@ -130,7 +130,7 @@ def announcement():
         message = data['message']
         icon = int(data['icon'])
         t = "[{}] {}".format(sender, title)
-        notifications.SendNotification(t, message, icon, dev=True)
+        notifications.SendNotification(t, message, icon, dev=False)
         return "Notification Sent", 200 
     except Exception as e:
         logging.exception(e)
@@ -142,4 +142,4 @@ def senders():
     return {"senders": senders}
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
