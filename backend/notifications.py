@@ -7,12 +7,12 @@ load_dotenv()
 
 private_key = os.getenv("PUSHSAFE")
 
-def SendNotification(title, message, dev=False):
+def SendNotification(title, message, icon=1, dev=False):
   group = "gs4140" if dev else 'a'
-  icon = 15 if dev else 136
+  # chosen_icon = 15 if dev else icon
 
   if dev:
-    title = "({}) {}".format("74Bully.com", title)
+    title = "({}) {}".format("Debug", title)
 
   if private_key is None:
     raise ConnectionError("No private key")
