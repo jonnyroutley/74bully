@@ -37,10 +37,25 @@ class ShoppingItem(db.Model):
     def __repr__(self):
         return '<Item %r>' % self.id
 
+class Rating(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    review = db.Column(db.String(200), nullable=False)
+    stars = db.Column(db.Integer, nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Item %r>' % self.id
+
 # Create a Schema to be used by marrshmallow for serialisation
 class ShoppingItemSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ShoppingItem
+
+class RatingSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Rating
 
 @app.route('/')
 def index():
@@ -115,6 +130,34 @@ def tasklistshow():
     else:
         tasks = ShoppingItem.query.order_by(ShoppingItem.date_created).all()
         return render_template('tasklist.html', tasks=tasks)
+
+@app.route('/ratings/', methods=['GET'])
+def ratings():
+    ratings = Rating.query.order_by(db.desc(Rating.date_created)).all()
+    ratings_schema = RatingSchema(many=True)
+    output = ratings_schema.dump(ratings)
+
+    return {"ratings": output}
+
+@app.route('/ratings/create/', methods=['POST'])
+def CreateRating():
+    data = request.get_data()
+    data = json.loads(data)
+    name = data['name']
+    title = data['title']
+    review = data['review']
+    stars = int(data['stars'])
+
+    newReview = Rating(name=name, title=title, review=review, stars=stars)
+
+    try:
+        db.session.add(newReview)
+        db.session.commit()
+        return "Added new review", 200
+    except:
+        return "Issue adding that review", 500
+
+
 
 @app.route('/houserules/')
 def houserules():

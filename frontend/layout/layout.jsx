@@ -14,12 +14,13 @@ export default function Layout({ metas, children }) {
         <Box p={5} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
           <Heading>74 Bully Household</Heading>
           <Box>
-            <Link p={1} href={'/announcements'}>Make Announcement</Link>
+            <Link p={1} href={'/announcements'}>Announcement</Link>
             <Link p={1} href={'/shopping-list'}>Shopping List</Link>
-            <Link p={1} href={'/house-rules'}>House Rules</Link>
+            <Link p={1} href={'/house-rules'}>Rules</Link>
+            <Link p={1} href={'/ratings'}>Ratings</Link>
           </Box>
         </Box>
-        <Center w={'100%'}>
+        <Center w={'100%'}bg={"rgb(128,255,51)"}>
           <Box w='xl' maxW={'100%'} my={5} p={2}>
             {children}
           </Box>
