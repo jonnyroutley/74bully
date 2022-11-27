@@ -41,7 +41,7 @@ class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     title = db.Column(db.String(200), nullable=False)
-    review = db.Column(db.String(200), nullable=False)
+    review = db.Column(db.String(1000), nullable=False)
     stars = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 

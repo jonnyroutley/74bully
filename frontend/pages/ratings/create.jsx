@@ -10,7 +10,9 @@ const Announcements = () => {
   const [rating, setRating] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const makeAnnouncement = async (e) => {
+  const toast = useToast()
+
+  const createReview = async (e) => {
     e.preventDefault()
     try {
       setIsSubmitting(true)
@@ -29,21 +31,34 @@ const Announcements = () => {
         setTitle("");
         setMessage("");
         setRating(0)
+
+        toast({
+          title: "Review Submitted",
+          description: "View your review on the reviews page.",
+          status: 'success',
+          duration: 5000,
+          isCloseable: true
+        })
       }
     } catch (err) {
       console.log(err);
+      toast({
+        title: "Issue with Review",
+        description: "Something went wrong when submitting your review",
+        status: 'error',
+        duration: 5000,
+        isClosable: true
+      })
     }
     setIsSubmitting(false)
-
   }
 
-  const toast = useToast()
 
   return (
-    <Layout metas={{title: "Announcements"}}>
+    <Layout metas={{title: "Create Review"}}>
       <Heading>Rate your visit</Heading>
       <Text my={2}>🔔 Review Time 🔔</Text>
-      <form onSubmit={makeAnnouncement} method="POST">
+      <form onSubmit={createReview} method="POST">
         <Box display={'flex'} mb={2} flexDir={'column'}>
           <Input
             type="text"

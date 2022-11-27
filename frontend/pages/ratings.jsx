@@ -1,12 +1,11 @@
-import { Button, Heading, Box, Spinner, Center, Text, Input, Image, Badge, Link } from "@chakra-ui/react"
+import { Heading, Box, Spinner, Center, Text, Image, Badge, Link } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
 
 
-const ShoppingList = () => {
+const Ratings = () => {
   const [ratings, setRatings] = useState([])
   const [loading, setLoading] = useState(true)
-  const [newTask, setNewTask] = useState("")
 
   const fetchData = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/ratings/');
@@ -16,29 +15,9 @@ const ShoppingList = () => {
   }
 
   useEffect(() => {
-    // call the function
     fetchData()
-      // make sure to catch any error
       .catch(console.error);
   }, [])
-
-  const createTask = async (e) => {
-    e.preventDefault()
-    try {
-      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/tasklist/create", {
-        method: "POST",
-        body: JSON.stringify({
-          content: newTask
-        }),
-      });
-      if (res.status === 200) {
-        setNewTask("");
-        fetchData()
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
   const formatTime = (dt) => {
     const today = new Date(dt)
@@ -54,7 +33,6 @@ const ShoppingList = () => {
       return <Badge colorScheme={'red'}>Rated {stars} cats</Badge>
     }
   }
-
 
   return (
     <Layout metas={{title: "House Ratings"}}>
@@ -100,4 +78,4 @@ const ShoppingList = () => {
   )
 }
 
-export default ShoppingList;
+export default Ratings;
