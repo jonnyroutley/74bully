@@ -153,6 +153,11 @@ def CreateRating():
     try:
         db.session.add(newReview)
         db.session.commit()
+        t = "Someone Reviewed Your House !"
+        message = 'Check the website to see what "{}" had to say...'.format(name)
+        # this icon is a speech bubble
+        notifications.SendNotification(t, message, icon=33, dev=False)
+
         return "Added new review", 200
     except:
         return "Issue adding that review", 500
