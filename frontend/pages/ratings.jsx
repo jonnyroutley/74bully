@@ -36,6 +36,7 @@ const Ratings = () => {
 
   return (
     <Layout metas={{title: "House Ratings"}}>
+      <Box w='xl' maxW={'100%'} my={5} p={2}>
         <Heading>House Ratings</Heading>
         <Text my={2}>From our lovely visitors</Text>
         <Link
@@ -74,6 +75,7 @@ const Ratings = () => {
         </Box>
         </>
       }
+      </Box>
     </Layout>
   )
 }

@@ -15,12 +15,14 @@ const MyComponent = ({my_name}) => {
 const Home = () => {
   return (
     <Layout metas={{title: "74 Bully Dashboard"}}>
+      <Box w='xl' maxW={'100%'} my={5} p={2}>
         <MyComponent
           my_name="JFMD"
         />
         <Box>
           <Image src={'./animals.png'}/>
         </Box>
+      </Box>
     </Layout>
   )
 }
