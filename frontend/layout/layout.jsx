@@ -12,7 +12,7 @@ export default function Layout({ metas, children }) {
       </Head>
       <Box h={"100vh"} bg={"rgb(128,255,51)"}>
         <Box p={5} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-          <Heading>74 Bully Household</Heading>
+          <Heading><Link href={'/'}>74 Bully Household</Link></Heading>
           <Box>
             <Link p={1} href={'/announcements'}>Announcement</Link>
             <Link p={1} href={'/shopping-list'}>Shopping List</Link>

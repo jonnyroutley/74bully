@@ -1,5 +1,6 @@
 import { Button, Heading, Box, Spinner, Center, Text, Input, Select, useRadio, useRadioGroup, useToast, Image, FormLabel, Textarea } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
+import { useRouter } from 'next/router'
 import Layout from "../../layout/layout"
 import Rating from "./Rating"
 
@@ -9,6 +10,7 @@ const Announcements = () => {
   const [message, setMessage] = useState("")
   const [rating, setRating] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter()
 
   const toast = useToast()
 
@@ -32,13 +34,14 @@ const Announcements = () => {
         setMessage("");
         setRating(0)
 
-        toast({
-          title: "Review Submitted",
-          description: "View your review on the reviews page.",
-          status: 'success',
-          duration: 5000,
-          isCloseable: true
-        })
+        router.push("/ratings")
+        // toast({
+        //   title: "Review Submitted",
+        //   description: "View your review on the reviews page.",
+        //   status: 'success',
+        //   duration: 5000,
+        //   isCloseable: true
+        // })
       }
     } catch (err) {
       console.log(err);
