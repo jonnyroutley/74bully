@@ -56,6 +56,7 @@ const Announcements = () => {
 
   return (
     <Layout metas={{title: "Create Review"}}>
+      <Box w='xl' maxW={'100%'} my={5} p={2}>
       <Heading>Rate your visit</Heading>
       <Text my={2}>🔔 Review Time 🔔</Text>
       <form onSubmit={createReview} method="POST">
@@ -106,6 +107,7 @@ const Announcements = () => {
           <Button type="submit" colorScheme={'teal'} my={1} isLoading={isSubmitting}>Submit Review</Button>
         </Box>
       </form>
+      </Box>
     </Layout>
   )
 }

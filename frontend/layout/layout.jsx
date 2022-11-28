@@ -21,9 +21,7 @@ export default function Layout({ metas, children }) {
           </Box>
         </Box>
         <Center w={'100%'}bg={"rgb(128,255,51)"}>
-          <Box w='xl' maxW={'100%'} my={5} p={2}>
-            {children}
-          </Box>
+          {children}
         </Center>
       </Box>
     </>

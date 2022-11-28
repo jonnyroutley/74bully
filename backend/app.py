@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from datetime import datetime
+from library import parse_times
 import json
 import os
 import notifications
 import logging
+import requests
 
 logging.basicConfig(
     filename="log.log",
@@ -162,6 +164,23 @@ def CreateRating():
     except:
         return "Issue adding that review", 500
 
+@app.route("/libraries/")
+def libraries():
+    url = "https://www.bodleian.ox.ac.uk/api/oxdrupal_listings/1782151/52517876"
+
+    library_page = requests.get(url)
+    data = library_page.json()
+    libs = data['items']
+
+    library_data = []
+
+    for lib in libs:
+        temp = {}
+        temp['name'] = lib['title']
+        temp['times'] = parse_times(lib['teaser_text'])
+        library_data.append(temp)
+    
+    return {"libraries" : library_data}
 
 
 @app.route('/houserules/')
@@ -190,4 +209,4 @@ def senders():
     return {"senders": senders}
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
