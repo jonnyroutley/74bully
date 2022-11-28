@@ -14,17 +14,16 @@ export default function Layout({ metas, children }) {
         <Box p={5} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
           <Heading><Link href={'/'}>74 Bully Household</Link></Heading>
           <Box>
-            <Link p={1} href={'/announcements'}>Announcement</Link>
-            <Link p={1} href={'/shopping-list'}>Shopping List</Link>
-            <Link p={1} href={'/house-rules'}>Rules</Link>
-            <Link p={1} href={'/ratings'}>Ratings</Link>
-            <Link p={1} href={'/bins'}>Bins</Link>
+            <Link p={2} bg={'blue'} color={'white'} mx={1} borderRadius={2} href={'/announcements'}>Announcement</Link>
+            <Link p={2} bg={'blue'} color={'white'} mx={1} borderRadius={2} href={'/shopping-list'}>Shopping List</Link>
+            <Link p={2} bg={'blue'} color={'white'} mx={1} borderRadius={2} href={'/house-rules'}>Rules</Link>
+            <Link p={2} bg={'blue'} color={'white'} mx={1} borderRadius={2} href={'/ratings'}>Ratings</Link>
+            <Link p={2} bg={'blue'} color={'white'} mx={1} borderRadius={2} href={'/bins'}>Bins</Link>
+            <Link p={2} bg={'blue'} color={'white'} mx={1} borderRadius={2} href={'/libraries'}>Libraries</Link>
           </Box>
         </Box>
         <Center w={'100%'}bg={"rgb(128,255,51)"}>
-          <Box w='xl' maxW={'100%'} my={5} p={2}>
-            {children}
-          </Box>
+          {children}
         </Center>
       </Box>
     </>

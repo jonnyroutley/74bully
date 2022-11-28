@@ -3,15 +3,17 @@ Flask app API for House Website
 """
 
 from copy import deepcopy
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from datetime import datetime
+from library import parse_times
 import json
 import os
 import notifications
 import logging
-from flask import Flask, render_template, request, redirect
+import requests
 import trash
 
 logging.basicConfig(
@@ -194,6 +196,30 @@ def create_rating():
   except Exception:
     return 'Issue adding that review', 500
 
+@app.route('/libraries/')
+def libraries():
+  url = 'https://www.bodleian.ox.ac.uk/api/oxdrupal_listings/1782151/52517876'
+
+  library_page = requests.get(url, timeout=10)
+  data = library_page.json()
+  libs = data['items']
+
+  library_data = []
+  
+  for lib in libs:
+    temp = {}
+    image = str(lib['rendered_image'])
+    first = image.find('src')
+    image = image[(first+5):]
+    second = image.find('"')
+    image = image[:(second)]
+
+    temp['name'] = lib['title']
+    temp['img'] = image
+    temp['times'] = parse_times(lib['teaser_text'])
+    library_data.append(temp)
+
+  return {'libraries' : library_data}
 
 
 @app.route('/houserules/')
