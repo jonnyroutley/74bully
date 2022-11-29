@@ -18,6 +18,7 @@ export default function Layout({ metas, children }) {
             <Link p={1} href={'/shopping-list'}>Shopping List</Link>
             <Link p={1} href={'/house-rules'}>Rules</Link>
             <Link p={1} href={'/ratings'}>Ratings</Link>
+            <Link p={1} href={'/bins'}>Bins</Link>
           </Box>
         </Box>
         <Center w={'100%'}bg={"rgb(128,255,51)"}>
