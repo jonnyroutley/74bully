@@ -11,12 +11,11 @@ import trash
 from copy import deepcopy
 
 logging.basicConfig(
-    filename="log.log",
-    encoding="utf-8",
+    handlers=[logging.FileHandler(filename="./log.log", encoding="utf-8", mode="a+")],
     level=logging.DEBUG,
-    format='%(asctime)s %(message)s',
+    format="%(asctime)s %(message)s",
     datefmt='%m/%d/%Y %I:%M:%S %p'
-)
+    )
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
