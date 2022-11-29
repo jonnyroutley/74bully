@@ -70,9 +70,12 @@ class BinsSchema(ma.SQLAlchemyAutoSchema):
 
 def update_bin_file():
     bin_data = trash.get_bin_data()
-    bin_dict = deepcopy(bin_data).jsonify()
+    bin_list = deepcopy(bin_data).jsonify()
     dtnow = str(datetime.utcnow())
-    bin_dict['datetime'] = dtnow
+    bin_dict = {
+        'date_refreshed' : dtnow,
+        'bins' : bin_list
+    }
 
     with open('bins.json', 'w+') as bin_file:
         json.dump(bin_dict, bin_file)

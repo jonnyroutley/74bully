@@ -46,10 +46,11 @@ class Bins:
                     self.bins[key].set_date(item[1])
 
     def jsonify(self):
-        for key, val in self.bins.items():
+        bin_list = []
+        for val in self.bins.values():
             val.collection_date = str(val.collection_date.date())
-            self.bins[key] = val.__dict__
-        return self.__dict__
+            bin_list.append(val.__dict__)
+        return bin_list
 
     # def PrintBins(self):
     #     for key in self.bins:

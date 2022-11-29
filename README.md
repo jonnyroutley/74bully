@@ -20,6 +20,10 @@ Project to make a house dashboard using Flask
 - [ ] Update links on index page/make animals buttons
 - [ ] Make generally more gaudy
 - [x] Add website ratings page. Stars and comment.
+- [ ] Events Page
+  - [ ] BBQ
+  - [ ] Dinner
+  - [ ] 
 
 ## Development
 
