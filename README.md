@@ -16,10 +16,14 @@ Project to make a house dashboard using Flask
 - [ ] Use Chakra-ui themes
 - [x] Change announcement notification icon in pushsafer
 - [ ] Update rules
-- [ ] Add bins page
+- [x] Add bins page
 - [ ] Update links on index page/make animals buttons
 - [ ] Make generally more gaudy
 - [x] Add website ratings page. Stars and comment.
+- [ ] Events Page
+  - [ ] BBQ
+  - [ ] Dinner
+  - [ ] 
 
 ## Development
 
