@@ -7,6 +7,8 @@ import json
 import os
 import notifications
 import logging
+import trash
+from copy import deepcopy
 
 logging.basicConfig(
     filename="log.log",
@@ -56,6 +58,27 @@ class ShoppingItemSchema(ma.SQLAlchemyAutoSchema):
 class RatingSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Rating
+
+class Bins(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    colour = db.Column(db.String(200), nullable=False)
+    collection_date = db.Column(db.DateTime)
+
+class BinsSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Bins
+
+def update_bin_file():
+    bin_data = trash.get_bin_data()
+    bin_dict = deepcopy(bin_data).jsonify()
+    dtnow = str(datetime.utcnow())
+    bin_dict['datetime'] = dtnow
+
+    with open('bins.json', 'w+') as bin_file:
+        json.dump(bin_dict, bin_file)
+
+    return bin_data
+
 
 @app.route('/')
 def index():
@@ -188,6 +211,35 @@ def announcement():
 def senders():
     senders = ['Jonny', 'Fraser', 'Doug', 'Mia']
     return {"senders": senders}
+
+@app.route('/bins/', methods=["GET"])
+def bindicator():
+    """
+    send info from bins json file
+    """
+    with open('bins.json') as bin_file:
+        bin_data = json.load(bin_file)
+
+    return bin_data
+
+@app.route('/bins/update/', methods=["GET"])
+def update_bins():
+    """
+    get bin info from council website and write to json file
+    """
+    update_bin_file()
+    return "Bin Information Updated", 200
+
+@app.route('/bins/notify', methods=["GET"])
+def bins_notify():
+    my_bins = update_bin_file()
+    notif = my_bins.SendMessage()
+
+    if notif:
+        return "Bin Notification Sent", 200
+    else:
+        return "Dev Notification Sent", 200
+
 
 if __name__ == "__main__":
     app.run()
