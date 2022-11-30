@@ -45,19 +45,20 @@ const Libraries = () => {
         </Center>
         </>:
         <>
-        <Box w={'1200px'} maxW={'100%'} display={'flex'} flexDir={'row'} flexWrap={'wrap'}>
+        <SimpleGrid w={'1200px'} maxW={'100%'} columns={[2, 2, 4]}>
           {libraries.map((library) => (
-            <Box key={library.id} display={'flex'} bg={'white'} m={1} p={2} borderRadius={10} boxShadow={'lg'} flexDir={'column'} w={'200px'} py={2} borderBottom={'1px solid'} borderColor={'gray.400'}>
+            <Box key={library.id} display={'flex'} backgroundImage={'https://media.istockphoto.com/id/665114120/photo/gold-glitter-texture-abstract-background.jpg?s=612x612&w=0&k=20&c=m98h1OSbticHgD3jfI9-yMuQ9tYhOTrumY2GL7_6mOU='} m={1} p={2} borderRadius={10} boxShadow={'lg'} flexDir={'column'} py={2} borderBottom={'1px solid'} borderColor={'gray.400'}>
+              <Image src={library.img}/>
               <Heading size={'md'}>{library.name}</Heading>
               <Box display={'flex'} flexDirection={'row'}>
                 <Box pr={3}>
-                  <Text>Mon:</Text>
-                  <Text>Tues:</Text>
-                  <Text>Wed:</Text>
-                  <Text>Thurs:</Text>
-                  <Text>Fri:</Text>
-                  <Text>Sat:</Text>
-                  <Text>Sun:</Text>
+                  <Text fontWeight={600}>Mon:</Text>
+                  <Text fontWeight={600}>Tues:</Text>
+                  <Text fontWeight={600}>Wed:</Text>
+                  <Text fontWeight={600}>Thurs:</Text>
+                  <Text fontWeight={600}>Fri:</Text>
+                  <Text fontWeight={600}>Sat:</Text>
+                  <Text fontWeight={600}>Sun:</Text>
                 </Box>
                 <Box>
                   <Text>{library.times.Mon}</Text>
@@ -71,7 +72,7 @@ const Libraries = () => {
               </Box>
             </Box>
           ))}
-        </Box>
+        </SimpleGrid>
         </>
       }
       </Box>

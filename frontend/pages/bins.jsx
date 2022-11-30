@@ -47,6 +47,7 @@ const Bins = () => {
     
     return (
       <Layout metas={{title: "Bindicator"}}>
+        <Box w='xl' maxW={'100%'} my={5} p={2}>
           <Heading>Bindicator</Heading>
           <Text my={2}>It's trash time</Text>
           {!loading &&
@@ -81,6 +82,7 @@ const Bins = () => {
           </Box>
           </>
         }
+        </Box>
       </Layout>
     )
   }

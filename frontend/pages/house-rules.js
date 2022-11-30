@@ -1,4 +1,4 @@
-import { Heading, ListItem, UnorderedList } from "@chakra-ui/react";
+import { Heading, ListItem, UnorderedList, Box } from "@chakra-ui/react";
 import Layout from "../layout/layout"
 
 const HouseRules = () => {
