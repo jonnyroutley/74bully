@@ -13,3 +13,7 @@ Run with:
 ```bash
 python app.py
 ```
+
+## Linting
+
+Install the Pylint extension
