@@ -45,12 +45,13 @@ const Libraries = () => {
         </Center>
         </>:
         <>
-        <SimpleGrid w={'1200px'} maxW={'100%'} columns={[2, 2, 4]}>
+        <SimpleGrid w={'1200px'} maxW={'100%'} columns={[1, 2, 4]} spacing={4}>
           {libraries.map((library) => (
-            <Box key={library.id} display={'flex'} backgroundImage={'https://media.istockphoto.com/id/665114120/photo/gold-glitter-texture-abstract-background.jpg?s=612x612&w=0&k=20&c=m98h1OSbticHgD3jfI9-yMuQ9tYhOTrumY2GL7_6mOU='} m={1} p={2} borderRadius={10} boxShadow={'lg'} flexDir={'column'} py={2} borderBottom={'1px solid'} borderColor={'gray.400'}>
-              <Image src={library.img}/>
-              <Heading size={'md'}>{library.name}</Heading>
-              <Box display={'flex'} flexDirection={'row'}>
+            <Box key={library.id} display={'flex'} backgroundImage={'https://media.istockphoto.com/id/665114120/photo/gold-glitter-texture-abstract-background.jpg?s=612x612&w=0&k=20&c=m98h1OSbticHgD3jfI9-yMuQ9tYhOTrumY2GL7_6mOU='}
+              p={4} borderRadius={10} boxShadow={'lg'} flexDir={'column'} py={2} borderBottom={'1px solid'} borderColor={'gray.400'}>
+              <Image src={library.img} borderRadius={'md'}/>
+              <Heading size={'md'} my={2}>{library.name}</Heading>
+              <Box display={'flex'} flexDirection={'row'} bg={'gray'} borderRadius={'sm'} p ={3} color={'white'} opacity={0.8}>
                 <Box pr={3}>
                   <Text fontWeight={600}>Mon:</Text>
                   <Text fontWeight={600}>Tues:</Text>
