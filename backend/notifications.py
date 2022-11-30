@@ -29,7 +29,3 @@ def SendNotification(title, message, icon=1, dev=False):
   request = Request(url, urlencode(post_fields).encode())
   json = urlopen(request).read().decode()
   return json
-
-def SendFakeNotification(title, message):
-  print(title)
-  print(message)
