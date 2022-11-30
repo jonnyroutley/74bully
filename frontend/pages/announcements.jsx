@@ -96,6 +96,7 @@ const Announcements = () => {
 
   return (
     <Layout metas={{title: "Announcements"}}>
+      <Box w='xl' maxW={'100%'} my={5} p={2}>
       <Heading>Announcements</Heading>
       <Text my={2}>🔔 Notification Time 🔔</Text>
       {!loading &&
@@ -153,6 +154,7 @@ const Announcements = () => {
         </Box>
       </form>
       }
+    </Box>
     </Layout>
   )
 }

@@ -80,6 +80,7 @@ const ShoppingList = () => {
 
   return (
     <Layout metas={{title: "Shopping List"}}>
+      <Box w='xl' maxW={'100%'} my={5} p={2}>
         <Heading>Shopping List</Heading>
         <Text my={2}>Ayo pick this up</Text>
         <form onSubmit={createTask} method="POST">
@@ -131,6 +132,7 @@ const ShoppingList = () => {
         </Box>
         </>
       }
+      </Box>
     </Layout>
   )
 }
