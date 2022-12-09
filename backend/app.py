@@ -15,6 +15,11 @@ import notifications
 import logging
 import requests
 import trash
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import formataddr
+import smtplib
+import ssl
 
 logging.basicConfig(
   handlers=[logging.FileHandler(filename='./log.log',
@@ -89,6 +94,33 @@ def update_bin_file():
     json.dump(bin_dict, bin_file)
 
   return bin_data
+
+def send_email(sender, receiver, html):
+
+  text = """\
+  Dear user,
+  Something has gone wrong (500).
+  Many Thanks,
+  Menu Sender"""
+  email_username= os.getenv('EMAIL_USER')
+  email_pass = os.getenv('EMAIL_PASS')
+  msg = MIMEMultipart('alternative')
+  msg['From'] = formataddr(('Exeter College Ball Refunds', sender))
+  msg['To'] = receiver
+  msg['Subject'] = 'Ticket Refund Request'
+
+  part1 = MIMEText(text, 'plain')
+  part2 = MIMEText(html, 'html')
+
+  msg.attach(part1)
+  msg.attach(part2)
+
+  context = ssl.create_default_context()
+
+  with smtplib.SMTP_SSL('mail.exetercollegeball.co.uk', port=465, context=context) as connection:
+    connection.login(email_username, email_pass)
+    connection.sendmail(sender, receiver, msg.as_string())
+    connection.quit()
 
 
 @app.route('/')
@@ -205,7 +237,7 @@ def libraries():
   libs = data['items']
 
   library_data = []
-  
+
   for lib in libs:
     temp = {}
     image = str(lib['rendered_image'])
@@ -221,6 +253,29 @@ def libraries():
 
   return {'libraries' : library_data}
 
+@app.route('/ball/refund', methods=['POST'])
+def send_refund():
+  data = request.get_data()
+  data = json.loads(data)
+  name = data['name']
+  email = data['email']
+  ticket_type = data['ticket']
+  num_tickets = data['no_ticket']
+  reason = data['reason']
+
+  with open('static/email.html', encoding='UTF-8') as f:
+    html = f.read()
+
+  html = html.replace('=name=', name)
+  html = html.replace('=email=', email)
+  html = html.replace('=type=', ticket_type)
+  html = html.replace('=number=', num_tickets)
+  html = html.replace('=reason=', reason)
+  html = str(html)
+
+  send_email('refund@exetercollegeball.co.uk', 'fraser.rennie@exeter.ox.ac.uk', html)
+
+  return 'Sent Refund Request', 200
 
 @app.route('/houserules/')
 def houserules():
