@@ -9,6 +9,7 @@ from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from datetime import datetime
 from library import parse_times
+from dotenv import load_dotenv
 import json
 import os
 import notifications
@@ -20,6 +21,8 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 import smtplib
 import ssl
+
+load_dotenv()
 
 logging.basicConfig(
   handlers=[logging.FileHandler(filename='./log.log',
