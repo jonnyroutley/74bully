@@ -16,9 +16,11 @@ import notifications
 import logging
 import requests
 import trash
+from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
+from pdfgenerator import generate_pdf
 import smtplib
 import ssl
 
@@ -98,25 +100,10 @@ def update_bin_file():
 
   return bin_data
 
-def send_email(sender, receiver, html):
+def send_email(sender, receiver, msg):
 
-  text = """\
-  Dear user,
-  Something has gone wrong (500).
-  Many Thanks,
-  Menu Sender"""
   email_username= os.getenv('EMAIL_USER')
   email_pass = os.getenv('EMAIL_PASS')
-  msg = MIMEMultipart('alternative')
-  msg['From'] = formataddr(('Exeter College Ball Refunds', sender))
-  msg['To'] = receiver
-  msg['Subject'] = 'Ticket Refund Request'
-
-  part1 = MIMEText(text, 'plain')
-  part2 = MIMEText(html, 'html')
-
-  msg.attach(part1)
-  msg.attach(part2)
 
   context = ssl.create_default_context()
 
@@ -266,7 +253,7 @@ def send_refund():
   num_tickets = data['no_ticket']
   reason = data['reason']
 
-  with open('static/email.html', encoding='UTF-8') as f:
+  with open('static/refund_email.html', encoding='UTF-8') as f:
     html = f.read()
 
   html = html.replace('=name=', name)
@@ -276,9 +263,82 @@ def send_refund():
   html = html.replace('=reason=', reason)
   html = str(html)
 
-  send_email('refund@exetercollegeball.co.uk', 'fraser.rennie@exeter.ox.ac.uk', html)
+  sender = 'no-reply@exetercollegeball.co.uk'
+  receiver = 'fraser.rennie@exeter.ox.ac.uk'
+
+  text = """\
+  Dear user,
+  Something has gone wrong (500).
+  Many Thanks,
+  Menu Sender"""
+
+  msg = MIMEMultipart('alternative')
+  msg['From'] = formataddr(('Exeter College Ball', sender))
+  msg['To'] = receiver
+  msg['Subject'] = 'Ticket Refund Request'
+
+  part1 = MIMEText(text, 'plain')
+  part2 = MIMEText(html, 'html')
+
+  msg.attach(part1)
+  msg.attach(part2)
+
+  send_email(sender, receiver, msg)
 
   return 'Sent Refund Request', 200
+
+@app.route('/ball/access', methods=['POST'])
+def send_access():
+  data = request.get_data()
+  data = json.loads(data)
+  fname = data['fname']
+  lname = data['lname']
+  email = data['email']
+  additional = data['additional']
+  year = data['year']
+  subject = data['subject']
+  priority = data['priority']
+
+  file_name = generate_pdf(fname, lname, email, additional, year, subject, int(priority))
+
+  with open('static/access_email.html', encoding='UTF-8') as f:
+    html = f.read()
+
+  html = html.replace('{{fname}}', fname)
+  html = html.replace('{{lname}}', lname)
+  html = html.replace('{{email}}', email)
+  html = html.replace('{{year}}', year)
+  html = html.replace('{{subject}}', subject)
+
+  sender = 'no-reply@exetercollegeball.co.uk'
+  receiver = 'fraser.rennie@exeter.ox.ac.uk'
+
+  text = """\
+  Dear user,
+  Something has gone wrong (500).
+  Many Thanks,
+  Menu Sender"""
+
+  msg = MIMEMultipart('alternative')
+  msg['From'] = formataddr(('Exeter College Ball', sender))
+  msg['To'] = receiver
+  msg['Subject'] = 'Student Access Ticket Request'
+
+  part1 = MIMEText(text, 'plain')
+  part2 = MIMEText(html, 'html')
+
+  with open(file_name, 'rb') as f:
+    #attach = email.mime.application.MIMEApplication(f.read(),_subtype="pdf")
+    attach = MIMEApplication(f.read(),_subtype='pdf')
+  attach.add_header('Content-Disposition','attachment',filename=str(file_name))
+  msg.attach(attach)
+
+  msg.attach(part1)
+  msg.attach(part2)
+
+  send_email(sender, receiver, msg)
+
+  return 'Sent PDF', 200
 
 @app.route('/houserules/')
 def houserules():
