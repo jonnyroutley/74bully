@@ -120,10 +120,10 @@ def send_email(sender, receiver, html):
 
   context = ssl.create_default_context()
 
-  with smtplib.SMTP_SSL('mail.exetercollegeball.co.uk', port=465, context=context) as connection:
-    connection.login(email_username, email_pass)
-    connection.sendmail(sender, receiver, msg.as_string())
-    connection.quit()
+  with smtplib.SMTP_SSL('mail.exetercollegeball.co.uk', 465, context=context) as server:
+    server.login(email_username, email_pass)
+    server.sendmail(sender, receiver, msg.as_string())
+    server.quit()
 
 
 @app.route('/')
