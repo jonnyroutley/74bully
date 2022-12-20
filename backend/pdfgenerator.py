@@ -4,6 +4,8 @@ Generate PDF for access tickets
 
 from fpdf import FPDF
 from datetime import datetime
+import random
+import string
 
 def generate_pdf(fname, lname, email, additional_information, year: str, subject, priority_number: int):
   pdf = FPDF()
@@ -43,7 +45,8 @@ def generate_pdf(fname, lname, email, additional_information, year: str, subject
   pdf.set_title('Student Access Form')
   pdf.set_author('Exeter College Ball Committee')
 
-  file_name = fname.lower() + '-' + lname.lower() + '-access-ticket-form.pdf'
+  letters = ''.join(random.choice(string.ascii_letters) for _ in range(5))
+  file_name = letters + '-' + fname.lower() + '-' + lname.lower() + '-access-ticket-form.pdf'
 
   pdf.output(file_name)
   return file_name
