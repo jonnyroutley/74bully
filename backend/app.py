@@ -110,6 +110,7 @@ def send_email(sender, receiver, msg):
   with smtplib.SMTP_SSL('mail.exetercollegeball.co.uk', 465, context=context) as server:
     server.login(email_username, email_pass)
     server.sendmail(sender, receiver, msg.as_string())
+    logging.info('Sent mail to %s', receiver)
     server.quit()
 
 
@@ -264,7 +265,7 @@ def send_refund():
   html = str(html)
 
   sender = 'no-reply@exetercollegeball.co.uk'
-  receiver = 'fraser.rennie@exeter.ox.ac.uk'
+  recipients = ['fraser.rennie@exeter.ox.ac.uk', 'anna.barrett@exeter.ox.ac.uk']
 
   text = """\
   Dear user,
@@ -274,7 +275,7 @@ def send_refund():
 
   msg = MIMEMultipart('alternative')
   msg['From'] = formataddr(('Exeter College Ball', sender))
-  msg['To'] = receiver
+  msg['To'] = ', '.join(recipients)
   msg['Subject'] = 'Ticket Refund Request'
 
   part1 = MIMEText(text, 'plain')
@@ -283,9 +284,30 @@ def send_refund():
   msg.attach(part1)
   msg.attach(part2)
 
-  send_email(sender, receiver, msg)
+  send_email(sender, recipients, msg)
+
+  # Send notification to user
+
+  with open('static/refund_email_return.html', encoding='UTF-8') as f:
+    html2 = f.read()
+
+  html2 = html2.replace('=name=', name)
+
+  msg2 = MIMEMultipart('alternative')
+  msg2['From'] = formataddr(('Exeter College Ball', sender))
+  msg2['To'] = email
+  msg2['Subject'] = 'Ticket Refund Request'
+
+  part3 = MIMEText(text, 'plain')
+  part4 = MIMEText(html2, 'html')
+
+  msg2.attach(part3)
+  msg2.attach(part4)
+
+  send_email(sender, email, msg2)
 
   return 'Sent Refund Request', 200
+
 
 @app.route('/ball/access', methods=['POST'])
 def send_access():
@@ -311,7 +333,7 @@ def send_access():
   html = html.replace('{{subject}}', subject)
 
   sender = 'no-reply@exetercollegeball.co.uk'
-  receiver = 'fraser.rennie@exeter.ox.ac.uk'
+  receiver = 'anna.barrett@exeter.ox.ac.uk'
 
   text = """\
   Dear user,
@@ -337,6 +359,32 @@ def send_access():
   msg.attach(part2)
 
   send_email(sender, receiver, msg)
+
+  # Now send to person who filled out form.
+
+  with open('static/access_email_return.html', encoding='UTF-8') as f:
+    html2 = f.read()
+
+  html2 = html2.replace('{{fname}}', fname)
+
+  msg2 = MIMEMultipart('alternative')
+  msg2['From'] = formataddr(('Exeter College Ball', sender))
+  msg2['To'] = email
+  msg2['Subject'] = 'Student Access Ticket Request'
+
+  part3 = MIMEText(text, 'plain')
+  part4 = MIMEText(html2, 'html')
+
+  with open(file_name, 'rb') as f:
+    #attach = email.mime.application.MIMEApplication(f.read(),_subtype="pdf")
+    attach = MIMEApplication(f.read(),_subtype='pdf')
+  attach.add_header('Content-Disposition','attachment',filename=str(file_name))
+  msg2.attach(attach)
+
+  msg2.attach(part3)
+  msg2.attach(part4)
+
+  send_email(sender, email, msg2)
 
   return 'Sent PDF', 200
 
