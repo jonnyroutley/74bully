@@ -1,8 +1,26 @@
-import { Box, Heading, Center, Link } from "@chakra-ui/react";
+import { 
+  Box, Heading, Center, Link, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, 
+  DrawerContent, DrawerCloseButton, useDisclosure, Button
+} from "@chakra-ui/react";
+import {useState} from "react";
 import Head from "next/head";
 
 
 export default function Layout({ metas, children }) {
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [placement, setPlacement] = useState('right')
+
+  const links = [
+    {name: "Announcement", link: "/announcements"},
+    {name: "Shopping List", link: "/shopping-list"},
+    {name: "Rules", link: "/house-rules"},
+    {name: "Ratings", link: "/ratings"},
+    {name: "Bins", link: "/bins"},
+    {name: "Libraries", link: "/libraries"},
+
+  ]
+
   return (
     <>
       <Head>
@@ -13,15 +31,27 @@ export default function Layout({ metas, children }) {
       <Box h={"100vh"} bg={"rgb(128,255,51)"}>
         <Box p={5} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
           <Heading><Link href={'/'}>74 Bully Household</Link></Heading>
-          <Box>
-            <Link p={2} href={'/announcements'}>Announcement</Link>
-            <Link p={2} href={'/shopping-list'}>Shopping List</Link>
-            <Link p={2} href={'/house-rules'}>Rules</Link>
-            <Link p={2} href={'/ratings'}>Ratings</Link>
-            <Link p={2} href={'/bins'}>Bins</Link>
-            <Link p={2} href={'/libraries'}>Libraries</Link>
+          <Box display={{ base: "none", lg: "flex"}}>
+            {links.map((link) => (
+              <Link key={link.link} p={2} href={link.link}>{link.name}</Link>
+            ))}
           </Box>
+          <Button colorScheme='purple' onClick={onOpen} bg={"rgb(227,28,121)"} display={{ base: "block", lg: "none"}}>
+            Menu
+          </Button>
         </Box>
+
+        <Drawer placement={placement} onClose={onClose} isOpen={isOpen}>
+          <DrawerOverlay />
+          <DrawerContent color={'white'} bg={"rgb(227,28,121)"}>
+            <DrawerHeader borderBottomWidth='1px'>Cool Drawer</DrawerHeader>
+            <DrawerBody>
+              {links.map((link) => (
+                <Link key={link.link} p={2} href={link.link} display={"block"}>{link.name}</Link>
+              ))}
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
         <Center w={'100%'}bg={"rgb(128,255,51)"}>
           {children}
         </Center>
