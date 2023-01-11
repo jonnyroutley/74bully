@@ -10,7 +10,12 @@ const Ratings = () => {
   const fetchData = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/ratings/');
     let data = await res.json()
-    setRatings(data.ratings)
+    // Filter out any archived ratings
+    // This should be done server side
+    var new_ratings = data.ratings.filter(function(rating) {
+      return rating.archive != true;
+    });
+    setRatings(new_ratings)
     setLoading(false)
   }
 
@@ -62,8 +67,8 @@ const Ratings = () => {
               <Heading size={'md'}>{rating.title}</Heading>
               <Heading size={'sm'} fontWeight={400} mb={3}>{rating.name}</Heading>
               <Box display={'flex'} flexDir={'row'}>
-                {[...Array(rating.stars)].map((e,i) => <Image src={'cat-icon.png'} w={10} p={1}/>)}
-                {[...Array(5 - rating.stars)].map((e,i) => <Image src={'cat-icon-gray.png'} w={10} p={1}/>)}
+                {[...Array(rating.stars)].map((e,i) => <Image key={i} src={'cat-icon.png'} w={10} p={1}/>)}
+                {[...Array(5 - rating.stars)].map((e,i) => <Image key={i} src={'cat-icon-gray.png'} w={10} p={1}/>)}
               </Box>
               <Box>
               <BadgeRating stars={rating.stars}/>

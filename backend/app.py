@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
+from flask_migrate import Migrate
 from datetime import datetime
 from library import parse_times
 from dotenv import load_dotenv
@@ -44,6 +45,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] =\
         'sqlite:///' + os.path.join(basedir, 'house.db')
 
 db = SQLAlchemy(app)
+migrate = Migrate(app,db)
+
 ma = Marshmallow(app)
 
 # Create Schema for SQLAlchemy ie the database
@@ -53,6 +56,7 @@ class ShoppingItem(db.Model):
   date_created = db.Column(db.DateTime, default=datetime.utcnow)
   date_updated = db.Column(db.DateTime, default=datetime.utcnow)
   completed = db.Column(db.Boolean, default=False, nullable=False)
+  quantity = db.Column(db.Integer, default=1)
 
   def __repr__(self):
     return r'<Item {self.id}>'
@@ -64,6 +68,7 @@ class Rating(db.Model):
   review = db.Column(db.String(1000), nullable=False)
   stars = db.Column(db.Integer, nullable=False)
   date_created = db.Column(db.DateTime, default=datetime.utcnow)
+  archive = db.Column(db.Boolean, default=False)
 
   def __repr__(self):
     return r'<Item {self.id}>'
@@ -218,6 +223,14 @@ def create_rating():
     return 'Added new review', 200
   except Exception:
     return 'Issue adding that review', 500
+
+@app.route('/ratings/update/<int:rating_id>', methods=['POST'])
+def update_rating(rating_id):
+  rating = Rating.query.get_or_404(rating_id)
+  data = request.get_json()
+  rating.archive = data['archive']
+  db.session.commit()
+  return 'Perfect', 200
 
 @app.route('/libraries/')
 def libraries():
