@@ -25,13 +25,15 @@ logging.basicConfig(
 )
 
 class Bin:
+  """
+  Bin class
+  """
   def __init__(self, color, description):
     self.color = color
     self.description = description
 
   def SetDate(self, date):
-    ignore = "Next Collection: "
-    date_string = date[len(ignore):]
+    date_string = date.split(": ")[-1]
     date_time = datetime.strptime(date_string, "%A %d %B %Y")
     self.collection_date = date_time
 
@@ -46,11 +48,11 @@ class Bins:
   def AddBin(self, new_bin : Bin):
     self.bins[new_bin.color] = new_bin
 
-  def PopulateBins(self, data):
-    for item in data:
-      for (key, value) in self.bins.items():
-        if key in item[0]:
-          value.SetDate(item[1])
+  def PopulateBins(self, p_tags):
+    for html_text in p_tags:
+      for value in self.bins.values():
+        if value.description in html_text:
+          value.SetDate(html_text)
 
   def Jsonify(self):
     bin_list = []
@@ -92,57 +94,29 @@ class Bins:
     return 0
 
 def get_bin_data():
-  bin_url = "https://ecitizen.oxford.gov.uk/citizenportal/form.aspx?form=Bin_Collection_Day"
-
-  r1 = requests.get(bin_url, verify=False, timeout=10)
-  soup1 = BeautifulSoup(r1.content, "html.parser")
-
+  bin_url = "https://www.oxford.gov.uk/mybinday"
 
   payload1 = {
-    "Eform$Bin_Collection_Address_Search$AddressField_CustomerAddress$ibtnFindAddress.x" : 1,
-    "Eform$Bin_Collection_Address_Search$AddressField_CustomerAddress$ibtnFindAddress.y" : 1,
-    "Eform$Bin_Collection_Address_Search$AddressField_CustomerAddress$CustomerAddress" : os.getenv("POSTCODE")
+    "q6ad4e3bf432c83230a0347a6eea6c805c672efeb_0_0": os.getenv("POSTCODE"),
+    "q6ad4e3bf432c83230a0347a6eea6c805c672efeb_1_0": os.getenv("PROPERTYREF"),
+    "page": 355
   }
 
-  payload1["__VIEWSTATE"] = soup1.select_one("#__VIEWSTATE")["value"]
-  payload1["__VIEWSTATEGENERATOR"] = soup1.select_one("#__VIEWSTATEGENERATOR")["value"]
-  payload1["__EVENTVALIDATION"] = soup1.select_one("#__EVENTVALIDATION")["value"]
+  s = requests.session()
+  s.post(bin_url, data=payload1)
 
-  r2 = requests.post(bin_url, data=payload1, verify=False, cookies=r1.cookies, timeout=10)
-  soup2 = BeautifulSoup(r2.text, "html.parser")
+  payload1["next"] = "Next"
+  r2 = s.post(bin_url, data=payload1)
+  soup2 = BeautifulSoup(r2.content, "html.parser")
 
-  payload2 = {
-    "Eform$Bin_Collection_Address_Search$AddressField_CustomerAddress$CustomerAddress" : os.getenv("POSTCODE"),
-    "Eform$Bin_Collection_Address_Search$AddressField_CustomerAddress$lstSelectAddress" : os.getenv("PROPERTYREF"),
-    "Eform$Bin_Collection_Address_Search$NavigateNextButton.x" : 62,
-    "Eform$Bin_Collection_Address_Search$NavigateNextButton.y" : 17
-  }
-
-  payload2["__VIEWSTATE"] = soup2.select_one("#__VIEWSTATE")["value"]
-  payload2["__VIEWSTATEGENERATOR"] = soup2.select_one("#__VIEWSTATEGENERATOR")["value"]
-  payload2["__EVENTVALIDATION"] = soup2.select_one("#__EVENTVALIDATION")["value"]
-
-  r3 = requests.post(bin_url, data=payload2, verify=False, cookies=r2.cookies, timeout=10)
-  soup3 = BeautifulSoup(r3.text, "html.parser")
+  ps = soup2.select("div.editor > p")
+  p_text = [p.text for p in ps]
 
   my_bins = Bins()
-  my_bins.AddBin(Bin("Green", "General waste"))
+  my_bins.AddBin(Bin("Green", "Refuse"))
   my_bins.AddBin(Bin("Blue", "Recycling"))
-  my_bins.AddBin(Bin("Food", "Food waste"))
+  my_bins.AddBin(Bin("Food", "Food"))
 
-  bins = [item.text for item in soup3.find_all("th")]
-  dates = [item.text for item in soup3.find_all("td")]
+  my_bins.PopulateBins(p_text)
 
-  if any("exception" in x for x in dates):
-    print(soup3, file=open("error.log","a", encoding="UTF=8"))
-    raise AssertionError("Wrong page returned")
-
-  result = list(zip(bins, dates))
-  # print(*result, sep='\n')
-
-  my_bins.PopulateBins(result)
-  # my_bins.PrintBins()
-  # sent = my_bins.SendMessage()
-
-  # returns 1 if message was sent and 0 if not
   return my_bins
