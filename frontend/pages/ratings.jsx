@@ -1,4 +1,4 @@
-import { Heading, Box, Spinner, Center, Text, Image, Badge, Link } from "@chakra-ui/react"
+import { Heading, Box, Spinner, Center, Text, Image, Badge, Link, getToastPlacement } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
 
@@ -6,16 +6,22 @@ import Layout from "../layout/layout"
 const Ratings = () => {
   const [ratings, setRatings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [total, setTotal] = useState({})
 
   const fetchData = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/ratings/');
+    let res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/ratings/');
     let data = await res.json()
     // Filter out any archived ratings
     // This should be done server side
     var new_ratings = data.ratings.filter(function(rating) {
       return rating.archive != true;
-    });
+    })
+    
+    res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/ratings/total/');
+    data = await res.json()
+    ;
     setRatings(new_ratings)
+    setTotal(data)
     setLoading(false)
   }
 
@@ -40,10 +46,11 @@ const Ratings = () => {
   }
 
   return (
-    <Layout metas={{title: "House Ratings"}}>
+    <Layout metas={{title: "House Reviews"}}>
       <Box w='xl' maxW={'100%'} my={5} p={2}>
-        <Heading>House Ratings</Heading>
+        <Heading>House Reviews</Heading>
         <Text my={2}>From our lovely visitors</Text>
+        <Text>Average score: <b>{total.average}</b> from <b>{total.number}</b> reviews</Text>
         <Link
           href={'/ratings/create'}
           bg={'pink.500'}

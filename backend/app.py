@@ -73,10 +73,26 @@ class Rating(db.Model):
   def __repr__(self):
     return r'<Item {self.id}>'
 
+class Event(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  title = db.Column(db.String(500), nullable=False)
+  desc = db.Column(db.String(1000), nullable=False)
+  time_and_date = db.Column(db.DateTime, default=datetime.utcnow)
+  location = db.Column(db.String(400), nullable=False)
+  date_created = db.Column(db.DateTime, default=datetime.utcnow)
+  date_updated = db.Column(db.DateTime, default=datetime.utcnow)
+
+  def __repr__(self):
+    return r'<Item {self.id}>'
+
 # Create a Schema to be used by marrshmallow for serialisation
 class ShoppingItemSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
     model = ShoppingItem
+
+class EventSchema(ma.SQLAlchemyAutoSchema):
+  class Meta:
+    model = Event
 
 class RatingSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
@@ -194,7 +210,7 @@ def tasklistshow():
     return render_template('tasklist.html', tasks=tasks)
 
 @app.route('/ratings/', methods=['GET'])
-def ratings():
+def all_ratings():
   all_ratings = Rating.query.order_by(db.desc(Rating.date_created)).all()
   ratings_schema = RatingSchema(many=True)
   output = ratings_schema.dump(all_ratings)
@@ -231,6 +247,20 @@ def update_rating(rating_id):
   rating.archive = data['archive']
   db.session.commit()
   return 'Perfect', 200
+
+@app.route('/ratings/total/', methods=['GET'])
+def total_rating():
+  ratings = Rating.query.all()
+  num_rows = db.session.query(Rating).count()
+  score = 0
+  for r in ratings:
+    if not r.archive:
+      score += r.stars
+    else:
+      num_rows -= 1
+  ave = round(score/num_rows, 2)
+  out = {'average': ave, 'number': num_rows}
+  return out, 200
 
 @app.route('/libraries/')
 def libraries():
@@ -320,7 +350,6 @@ def send_refund():
   send_email(sender, email, msg2)
 
   return 'Sent Refund Request', 200
-
 
 @app.route('/ball/access', methods=['POST'])
 def send_access():
@@ -455,6 +484,38 @@ def bins_notify():
   else:
     return 'Dev Notification Sent', 200
 
+@app.route('/events/', methods=['GET'])
+def get_events():
+  """
+  Get all of the events
+  """
+  tasks = Event.query.order_by(Event.date_created).all()
+  task_schema = EventSchema(many=True)
+  output = task_schema.dump(tasks)
+
+  return {'events': output}
+
+@app.route('/events/create/', methods=['POST'])
+def create_event():
+  data = request.get_data()
+  data = json.loads(data)
+  title = data['title']
+  desc = data['desc']
+  location = data['location']
+
+  new_event = Event(title=title, desc=desc, location=location)
+
+  try:
+    db.session.add(new_event)
+    db.session.commit()
+    # t = 'Someone Reviewed Your House !'
+    # message = f'Check the website to see what "{name}" had to say...'
+    # this icon is a speech bubble
+    # notifications.send_notification(t, message, icon=33, dev=False)
+
+    return 'Added new event', 200
+  except Exception:
+    return 'Issue adding that event', 500
 
 if __name__ == '__main__':
   app.run(debug=True)

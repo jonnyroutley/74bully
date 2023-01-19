@@ -1,0 +1,39 @@
+01/19/2023 05:42:08 PM [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+01/19/2023 05:42:08 PM [33mPress CTRL+C to quit[0m
+01/19/2023 05:42:08 PM  * Restarting with stat
+01/19/2023 05:42:11 PM  * Debugger is active!
+01/19/2023 05:42:11 PM  * Debugger PIN: 879-536-365
+01/19/2023 05:42:28 PM 127.0.0.1 - - [19/Jan/2023 17:42:28] "GET / HTTP/1.1" 200 -
+01/19/2023 05:42:29 PM 127.0.0.1 - - [19/Jan/2023 17:42:29] "GET /static/css/main.css HTTP/1.1" 200 -
+01/19/2023 05:42:29 PM 127.0.0.1 - - [19/Jan/2023 17:42:29] "GET /static/imgs/animals.png HTTP/1.1" 200 -
+01/19/2023 05:42:30 PM 127.0.0.1 - - [19/Jan/2023 17:42:30] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+01/19/2023 05:42:32 PM 127.0.0.1 - - [19/Jan/2023 17:42:32] "GET /tasklist/ HTTP/1.1" 200 -
+01/19/2023 05:44:43 PM 127.0.0.1 - - [19/Jan/2023 17:44:43] "GET /ratings/ HTTP/1.1" 200 -
+01/19/2023 05:44:43 PM 127.0.0.1 - - [19/Jan/2023 17:44:43] "GET /ratings/ HTTP/1.1" 200 -
+01/19/2023 05:44:55 PM 127.0.0.1 - - [19/Jan/2023 17:44:55] "GET /tasklist/ HTTP/1.1" 200 -
+01/19/2023 05:44:55 PM 127.0.0.1 - - [19/Jan/2023 17:44:55] "GET /tasklist/ HTTP/1.1" 200 -
+01/19/2023 05:46:11 PM 127.0.0.1 - - [19/Jan/2023 17:46:11] "[35m[1mGET /bins/ HTTP/1.1[0m" 500 -
+01/19/2023 05:46:12 PM 127.0.0.1 - - [19/Jan/2023 17:46:12] "[35m[1mGET /bins/ HTTP/1.1[0m" 500 -
+01/19/2023 05:46:12 PM 127.0.0.1 - - [19/Jan/2023 17:46:12] "[35m[1mGET /bins/ HTTP/1.1[0m" 500 -
+01/19/2023 05:46:19 PM Starting new HTTPS connection (1): www.oxford.gov.uk:443
+01/19/2023 05:46:20 PM https://www.oxford.gov.uk:443 "POST /mybinday HTTP/1.1" 200 4747
+01/19/2023 05:46:23 PM https://www.oxford.gov.uk:443 "POST /mybinday HTTP/1.1" 200 4227
+01/19/2023 05:46:23 PM 127.0.0.1 - - [19/Jan/2023 17:46:23] "GET /bins/update/ HTTP/1.1" 200 -
+01/19/2023 05:46:23 PM 127.0.0.1 - - [19/Jan/2023 17:46:23] "GET /bins/ HTTP/1.1" 200 -
+01/19/2023 05:50:36 PM  * Detected change in 'C:\\Users\\Jonathan\\Documents\\Code\\python\\flask-house-dash\\backend\\app.py', reloading
+01/19/2023 05:50:38 PM  * Restarting with stat
+01/19/2023 05:50:46 PM  * Debugger is active!
+01/19/2023 05:50:46 PM  * Debugger PIN: 879-536-365
+01/19/2023 05:50:48 PM  * Detected change in 'C:\\Users\\Jonathan\\Documents\\Code\\python\\flask-house-dash\\backend\\app.py', reloading
+01/19/2023 05:50:48 PM  * Restarting with stat
+01/19/2023 06:05:38 PM [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+01/19/2023 06:05:38 PM [33mPress CTRL+C to quit[0m
+01/19/2023 06:05:38 PM  * Restarting with stat
+01/19/2023 06:05:41 PM  * Debugger is active!
+01/19/2023 06:05:41 PM  * Debugger PIN: 879-536-365
+01/19/2023 06:06:19 PM 127.0.0.1 - - [19/Jan/2023 18:06:19] "GET /ratings/ HTTP/1.1" 200 -
+01/19/2023 06:06:22 PM 127.0.0.1 - - [19/Jan/2023 18:06:22] "GET /ratings/ HTTP/1.1" 200 -
+01/19/2023 06:07:06 PM  * Detected change in 'C:\\Users\\Jonathan\\Documents\\Code\\python\\flask-house-dash\\backend\\app.py', reloading
+01/19/2023 06:07:07 PM  * Restarting with stat
