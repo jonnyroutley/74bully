@@ -14,10 +14,12 @@ export default function Layout({ metas, children }) {
   const links = [
     {name: "Announcement", link: "/announcements"},
     {name: "Shopping List", link: "/shopping-list"},
-    {name: "Rules", link: "/house-rules"},
-    {name: "Ratings", link: "/ratings"},
+    // {name: "Rules", link: "/house-rules"},
+    {name: "Reviews", link: "/ratings"},
     {name: "Bins", link: "/bins"},
     {name: "Libraries", link: "/libraries"},
+    {name: "Events", link: "/events"},
+
 
   ]
 
