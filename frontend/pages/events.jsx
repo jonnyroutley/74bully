@@ -38,7 +38,7 @@ const Events = () => {
           {loading ?
           <>
           {/* <SkeletonText mt='4' noOfLines={4} spacing='4' skeletonHeight='2' startColor='blue.500' endColor='gray.500'/> */}
-          <Box display={'flex'} bg={'white'}flexDir={'column'} p={6} borderRadius={'lg'} borderBottom={'1px solid'} borderColor={'gray.400'} mt={6}>
+          <Box display={'flex'} bg={'white'} flexDir={'column'} p={6} borderRadius={'lg'} borderBottom={'1px solid'} borderColor={'gray.400'} mt={6}>
             {/* <SkeletonCircle size='10' /> */}
             <SkeletonText mt='4' noOfLines={4} spacing='4' skeletonHeight='2' />
           </Box>
@@ -46,7 +46,7 @@ const Events = () => {
           <>
           <Box w={'600px'} maxW={'100%'} boxShadow={'md'} mt={6}>
             {events.map((event) => (
-              <Box key={event.id} display={'flex'} bg={'white'}flexDir={'column'} p={6} borderRadius={'lg'} borderBottom={'1px solid'} borderColor={'gray.400'}>
+              <Box key={event.id} display={'flex'} bg={'white'}flexDir={'column'} p={6} mb={2} borderRadius={'lg'} borderBottom={'1px solid'} borderColor={'gray.400'}>
                 <Heading size={'md'}>{event.title}</Heading>
                 <Heading size={'sm'} fontWeight={400} mb={3} as={'i'}>{event.desc}</Heading>
                 <Text>Time and Date: {formatDateTime(event.time_and_date)}</Text>

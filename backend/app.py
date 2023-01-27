@@ -502,8 +502,9 @@ def create_event():
   title = data['title']
   desc = data['desc']
   location = data['location']
+  time_and_date = datetime.fromisoformat(data['eventTime'])
 
-  new_event = Event(title=title, desc=desc, location=location)
+  new_event = Event(title=title, desc=desc, location=location, time_and_date=time_and_date)
 
   try:
     db.session.add(new_event)
