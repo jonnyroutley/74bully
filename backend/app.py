@@ -521,5 +521,12 @@ def create_event():
   except Exception:
     return 'Issue adding that event', 500
 
+@app.route("/events/delete/<int:event_id>", methods=['DELETE'])
+def delete_event(event_id):
+  event = Event.query.get_or_404(event_id)
+  db.session.delete(event)
+  db.session.commit()
+  return f'Deleted event: {event_id}', 200 
+
 if __name__ == '__main__':
   app.run(debug=True)
