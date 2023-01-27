@@ -489,11 +489,14 @@ def get_events():
   """
   Get all of the events
   """
-  tasks = Event.query.order_by(Event.time_and_date).all()
+  future_events = Event.query.order_by(Event.time_and_date.asc()).filter(db.func.datetime(Event.time_and_date) >= datetime.today()).all()
+  past_events = Event.query.order_by(Event.time_and_date.desc()).filter(db.func.datetime(Event.time_and_date) < datetime.today()).all()
   task_schema = EventSchema(many=True)
-  output = task_schema.dump(tasks)
+  future = task_schema.dump(future_events)
+  past = task_schema.dump(past_events)
 
-  return {'events': output}
+
+  return {'future_events': future, 'past_events': past}
 
 @app.route('/events/create/', methods=['POST'])
 def create_event():

@@ -4,13 +4,13 @@ import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
 
 const Events = () => {
-    const [events, setEvents] = useState([])
+    const [events, setEvents] = useState({})
     const [loading, setLoading] = useState(true)
   
     const fetchData = async () => {
       const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/events/');
       let data = await res.json()
-      setEvents(data.events)
+      setEvents({future: data.future_events, past: data.past_events})
       setLoading(false)
     }
   
@@ -45,7 +45,17 @@ const Events = () => {
           </>:
           <>
           <Box w={'600px'} maxW={'100%'} boxShadow={'md'} mt={6}>
-            {events.map((event) => (
+            <Heading mb={2} size={'md'}>Upcoming</Heading>
+            {events.future.map((event) => (
+              <Box key={event.id} display={'flex'} bg={'white'}flexDir={'column'} p={6} mb={2} borderRadius={'lg'} borderBottom={'1px solid'} borderColor={'gray.400'}>
+                <Heading size={'md'}>{event.title}</Heading>
+                <Heading size={'sm'} fontWeight={400} mb={3} as={'i'}>{event.desc}</Heading>
+                <Text>Time and Date: {formatDateTime(event.time_and_date)}</Text>
+                <Text>Location: {event.location}</Text>
+              </Box>
+            ))}
+            <Heading mb={2} mt={3} size={'md'}>Past</Heading>
+            {events.past.map((event) => (
               <Box key={event.id} display={'flex'} bg={'white'}flexDir={'column'} p={6} mb={2} borderRadius={'lg'} borderBottom={'1px solid'} borderColor={'gray.400'}>
                 <Heading size={'md'}>{event.title}</Heading>
                 <Heading size={'sm'} fontWeight={400} mb={3} as={'i'}>{event.desc}</Heading>
