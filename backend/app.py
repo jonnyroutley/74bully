@@ -489,7 +489,7 @@ def get_events():
   """
   Get all of the events
   """
-  tasks = Event.query.order_by(Event.date_created).all()
+  tasks = Event.query.order_by(Event.time_and_date).all()
   task_schema = EventSchema(many=True)
   output = task_schema.dump(tasks)
 
