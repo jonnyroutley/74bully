@@ -240,13 +240,13 @@ def create_rating():
   except Exception:
     return 'Issue adding that review', 500
 
-@app.route('/ratings/update/<int:rating_id>', methods=['POST'])
+@app.route('/ratings/archive/<int:rating_id>', methods=['PATCH'])
 def update_rating(rating_id):
   rating = Rating.query.get_or_404(rating_id)
-  data = request.get_json()
-  rating.archive = data['archive']
+  # data = request.get_json()
+  rating.archive = not rating.archive
   db.session.commit()
-  return 'Perfect', 200
+  return f'Archive Status Updated for ID: {rating_id}', 200
 
 @app.route('/ratings/total/', methods=['GET'])
 def total_rating():
