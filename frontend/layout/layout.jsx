@@ -19,6 +19,7 @@ export default function Layout({ metas, children }) {
     {name: "Bins", link: "/bins"},
     {name: "Libraries", link: "/libraries"},
     {name: "Events", link: "/events"},
+    {name: "Cozymeter", link: "/temperature"},
 
 
   ]
