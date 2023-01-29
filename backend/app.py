@@ -8,10 +8,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from flask_migrate import Migrate
-from datetime import datetime, timedelta
+from datetime import datetime
 from library import parse_times
 from dotenv import load_dotenv
 import json
+import math
 import os
 import notifications
 import logging
@@ -566,8 +567,10 @@ def get_readings():
   for reading in output:
     temps.append(reading['temperature'])
     humid.append(reading['humidity'])
-    temp_time = datetime.fromtimestamp(reading['epoch'])
-    dates.append(temp_time.strftime('%d/%m/%Y, %H:%M:%S'))
+    # temp_time = datetime.fromtimestamp(reading['epoch'])
+    # dates.append(temp_time.strftime('%d/%m/%Y, %H:%M:%S'))
+    temp_time = math.floor(reading['epoch']*1000)
+    dates.append(temp_time)
     # times.append(datetime.strftime(datetime.fromtimestamp(reading['epoch'])))
 
   return {'temperatures' : temps, 'humidities': humid, 'dates': dates,'location': location}, 200

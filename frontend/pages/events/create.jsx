@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import Layout from "../../layout/layout"
 import Rating from "../ratings/Rating"
 
-const Announcements = () => {
+const CreateEvent = () => {
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
   const [eventTime, setEventTime] = useState("")
@@ -114,4 +114,4 @@ const Announcements = () => {
   )
 }
 
-export default Announcements;
+export default CreateEvent;

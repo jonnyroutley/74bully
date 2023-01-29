@@ -1,12 +1,11 @@
-import { Button, Heading, Box, Spinner, Center, Text, Input } from "@chakra-ui/react"
-import { CheckIcon, CloseIcon, SmallAddIcon } from "@chakra-ui/icons"
+import { Heading, Box, Spinner, Center, Text } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
 import { Line } from 'react-chartjs-2';
-
+import 'chartjs-adapter-date-fns';
 import {
   Chart as ChartJS,
-  CategoryScale,
+  TimeScale,
   LinearScale,
   PointElement,
   LineElement,
@@ -16,8 +15,8 @@ import {
 } from 'chart.js';
 
 ChartJS.register(
-  CategoryScale,
   LinearScale,
+  TimeScale,
   PointElement,
   LineElement,
   Title,
@@ -40,13 +39,23 @@ export const options = {
     },
   },
   scales: {
+    x: {
+      type: 'time',
+    },
+
     y1: {
       type: 'linear',
       display: true,
       position: 'left',
       suggestedMin: 12,
       suggestedMax: 18,
+      ticks: {
+        callback: function(value, index, ticks) {
+            return value + "°C";
+        }
+      }
     },
+
     y2: {
       type: 'linear',
       display: true,
@@ -56,8 +65,20 @@ export const options = {
       grid: {
         drawOnChartArea: false,
       },
+      ticks: {
+        callback: function(value, index, ticks) {
+            return value + "%";
+        }
+      }
     },
   },
+  elements:{
+    point:{
+        borderWidth: 0,
+        radius: 10,
+        backgroundColor: 'rgba(0,0,0,0)'
+    }
+  }
 };
 
 
@@ -75,20 +96,20 @@ const Temperature = () => {
       labels: data.dates,
       datasets: [
         {
-          label: "Temperatures",
+          label: "Temperature",
           fill: false,
-          // backgroundColor: colors.green.fill,
-          // pointBackgroundColor: colors.green.stroke,
           borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgb(255, 99, 132)',
+          pointRadius: 0,
           label: 'Temperature',
           data: data.temperatures,
           yAxisID: 'y1'
         },{
           label: "Humidity",
           fill: false,
-          // backgroundColor: colors.green.fill,
-          // pointBackgroundColor: colors.green.stroke,
           borderColor: 'rgb(53, 162, 235)',
+          backgroundColor: 'rgb(53, 162, 235)',
+          pointRadius: 0,
           label: 'Humidity',
           data: data.humidities,
           yAxisID: 'y2'
@@ -107,16 +128,24 @@ const Temperature = () => {
       <Box w='xl' maxW={'100%'} my={5} p={2}>
         <Heading>Temperature Readings</Heading>
         <Text>Temperature and humidity readings taken at 1 minute resolution</Text>
-        <Text>Locations: {location}</Text>
-        <Box bg='white' p={4} borderRadius={'lg'} h={'70vh'} mt={3}>
+        {loading ? 
+          <Center>
+            <Spinner m={6} size='lg'/>
+          </Center>
+          :
+          <>
+          <Text>Locations: {location}</Text>
+          <Box bg='white' p={4} borderRadius={'lg'} h={'70vh'} mt={3}>
           <Line
             options={options}
             data={temp_and_humid}
             redraw={true}
             updateMode={'resize'}
             // {...props}
-          />
+            />
         </Box>
+            </>
+          }
       </Box>
     </Layout>
   )

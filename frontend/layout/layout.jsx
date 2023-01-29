@@ -9,7 +9,6 @@ import Head from "next/head";
 export default function Layout({ metas, children }) {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [placement, setPlacement] = useState('right')
 
   const links = [
     {name: "Announcement", link: "/announcements"},
@@ -20,8 +19,6 @@ export default function Layout({ metas, children }) {
     {name: "Libraries", link: "/libraries"},
     {name: "Events", link: "/events"},
     {name: "Cozymeter", link: "/temperature"},
-
-
   ]
 
   return (
@@ -44,7 +41,7 @@ export default function Layout({ metas, children }) {
           </Button>
         </Box>
 
-        <Drawer placement={placement} onClose={onClose} isOpen={isOpen}>
+        <Drawer placement={'right'} onClose={onClose} isOpen={isOpen}>
           <DrawerOverlay />
           <DrawerContent color={'white'} bg={"rgb(227,28,121)"}>
             <DrawerHeader borderBottomWidth='1px'>Cool Drawer</DrawerHeader>
