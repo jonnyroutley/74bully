@@ -103,7 +103,8 @@ const Temperature = () => {
           pointRadius: 0,
           label: 'Temperature',
           data: data.temperatures,
-          yAxisID: 'y1'
+          yAxisID: 'y1',
+          tension: 0.2
         },{
           label: "Humidity",
           fill: false,
@@ -112,7 +113,8 @@ const Temperature = () => {
           pointRadius: 0,
           label: 'Humidity',
           data: data.humidities,
-          yAxisID: 'y2'
+          yAxisID: 'y2',
+          tension: 0.2
         },
       ],
     })
