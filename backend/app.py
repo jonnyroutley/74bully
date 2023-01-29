@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import datetime, timedelta
 from library import parse_times
 from dotenv import load_dotenv
 import json
@@ -134,6 +134,12 @@ def send_email(sender, receiver, msg):
     logging.info('Sent mail to %s', receiver)
     server.quit()
 
+def older_than_a_week(dt):
+  d = datetime.strptime(dt)
+  now = datetime.now()
+  # return true if date is older than a week
+  return (now-d).days > 7
+
 
 @app.route('/')
 def index():
@@ -171,6 +177,11 @@ def update(task_id):
 @app.route('/tasklist/', methods=['GET'])
 def tasklist():
   tasks = ShoppingItem.query.order_by(ShoppingItem.date_created).all()
+  # tasks = ShoppingItem.query.filter_by(completed=1 and )
+  for task in tasks:
+    if task['completed'] and older_than_a_week(task['date_updated']):
+
+
   task_schema = ShoppingItemSchema(many=True)
   output = task_schema.dump(tasks)
 
