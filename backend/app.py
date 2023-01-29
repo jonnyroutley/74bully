@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import datetime, timedelta
 from library import parse_times
 from dotenv import load_dotenv
 import json
@@ -85,6 +85,13 @@ class Event(db.Model):
   def __repr__(self):
     return r'<Item {self.id}>'
 
+class Reading(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  location = db.Column(db.String(100), nullable=False)
+  temperature = db.Column(db.Float, nullable=False)
+  humidity = db.Column(db.Float, nullable=False)
+  epoch = db.Column(db.Float, nullable=False)
+
 # Create a Schema to be used by marrshmallow for serialisation
 class ShoppingItemSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
@@ -97,6 +104,10 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
 class RatingSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
     model = Rating
+    
+class ReadingSchema(ma.SQLAlchemyAutoSchema):
+  class Meta:
+    model = Reading
 
 class Bins(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -133,6 +144,12 @@ def send_email(sender, receiver, msg):
     server.sendmail(sender, receiver, msg.as_string())
     logging.info('Sent mail to %s', receiver)
     server.quit()
+
+def older_than_a_week(dt):
+  d = datetime.strptime(dt)
+  now = datetime.now()
+  # return true if date is older than a week
+  return (now-d).days > 7
 
 
 @app.route('/')
@@ -171,6 +188,11 @@ def update(task_id):
 @app.route('/tasklist/', methods=['GET'])
 def tasklist():
   tasks = ShoppingItem.query.order_by(ShoppingItem.date_created).all()
+  # tasks = ShoppingItem.query.filter_by(completed=1 and )
+  # for task in tasks:
+  #   if task['completed'] and older_than_a_week(task['date_updated']):
+
+
   task_schema = ShoppingItemSchema(many=True)
   output = task_schema.dump(tasks)
 
@@ -526,7 +548,60 @@ def delete_event(event_id):
   event = Event.query.get_or_404(event_id)
   db.session.delete(event)
   db.session.commit()
-  return f'Deleted event: {event_id}', 200 
+  return f'Deleted event: {event_id}', 200
+
+@app.route('/reading/', methods=['GET'])
+def get_readings():
+  readings = Reading.query.order_by(Reading.epoch).all()
+  readingschema = ReadingSchema(many=True)
+  output = readingschema.dump(readings)
+
+  with open('location.txt', 'r', encoding='UTF-8') as f:
+    location = f.read()
+
+  dates = []
+  temps = []
+  humid = []
+
+  for reading in output:
+    temps.append(reading['temperature'])
+    humid.append(reading['humidity'])
+    temp_time = datetime.fromtimestamp(reading['epoch'])
+    dates.append(temp_time.strftime('%d/%m/%Y, %H:%M:%S'))
+    # times.append(datetime.strftime(datetime.fromtimestamp(reading['epoch'])))
+
+  return {'temperatures' : temps, 'humidities': humid, 'dates': dates,'location': location}, 200
+
+@app.route('/reading/add/', methods=['POST'])
+def add_reading():
+  data = request.get_data()
+  data = json.loads(data)
+  temperature = data['temperature']
+  humidity = data['humidity']
+  epoch = data['createdAt']
+  # read location from config file
+  with open('location.txt', 'r', encoding='UTF-8') as f:
+    location = f.read()
+
+  reading = Reading(location=location, temperature=temperature, humidity=humidity, epoch=epoch)
+  try:
+    db.session.add(reading)
+    db.session.commit()
+    return 'Added new reading', 200
+  except Exception:
+    logging.error('Failed to record reading.')
+    return 'Issue adding that reading', 500
+
+@app.route('/reading/location/', methods=['POST'])
+def set_location():
+  data = request.get_data()
+  data = json.loads(data)
+  loc = data['location']
+  with open('location.txt', 'w+', encoding='UTF-8') as f:
+    f.write(loc)
+  return f'Location set to {loc}', 200
+
+# @app.route()
 
 if __name__ == '__main__':
   app.run(debug=True)

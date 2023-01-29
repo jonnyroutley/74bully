@@ -16,7 +16,7 @@ python app.py
 
 ## DB Migration
 
-1. Create the `migrations` folder.
+1. Create the `migrations` folder (only done once!).
 
     ```bash
     flask db init
