@@ -80,6 +80,7 @@ class Event(db.Model):
   desc = db.Column(db.String(1000), nullable=False)
   time_and_date = db.Column(db.DateTime, default=datetime.utcnow)
   location = db.Column(db.String(400), nullable=False)
+  feature = db.Column(db.String(400), nullable=True)
   date_created = db.Column(db.DateTime, default=datetime.utcnow)
   date_updated = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -528,17 +529,18 @@ def create_event():
   title = data['title']
   desc = data['desc']
   location = data['location']
+  key = data['image']
   time_and_date = datetime.fromisoformat(data['eventTime'])
 
-  new_event = Event(title=title, desc=desc, location=location, time_and_date=time_and_date)
+  bucket = os.getenv('BUCKET')
+  region = os.getenv('REGION')
+
+  url = f'https://{bucket}.s3.{region}.amazonaws.com/{key}'
+  new_event = Event(title=title, desc=desc, location=location, time_and_date=time_and_date, feature=url)
 
   try:
     db.session.add(new_event)
     db.session.commit()
-    # t = 'Someone Reviewed Your House !'
-    # message = f'Check the website to see what "{name}" had to say...'
-    # this icon is a speech bubble
-    # notifications.send_notification(t, message, icon=33, dev=False)
 
     return 'Added new event', 200
   except Exception:
@@ -567,11 +569,8 @@ def get_readings():
   for reading in output:
     temps.append(reading['temperature'])
     humid.append(reading['humidity'])
-    # temp_time = datetime.fromtimestamp(reading['epoch'])
-    # dates.append(temp_time.strftime('%d/%m/%Y, %H:%M:%S'))
     temp_time = math.floor(reading['epoch']*1000)
     dates.append(temp_time)
-    # times.append(datetime.strftime(datetime.fromtimestamp(reading['epoch'])))
 
   return {'temperatures' : temps, 'humidities': humid, 'dates': dates,'location': location}, 200
 
