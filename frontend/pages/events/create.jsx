@@ -2,46 +2,58 @@ import { Button, Heading, Box, Spinner, Center, Text, Input, Select, useRadio, u
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/router'
 import Layout from "../../layout/layout"
-import Rating from "../ratings/Rating"
 
 const CreateEvent = () => {
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
   const [eventTime, setEventTime] = useState("")
   const [location, setLocation] = useState("")
+  const [file, setFile] = useState()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
   const toast = useToast()
 
+  const storeFile = (e) => {
+    console.log("Attempting to set file")
+    setFile(e.target.files[0])
+  }
+
   const createEvent = async (e) => {
     e.preventDefault()
     try {
       setIsSubmitting(true)
-      let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/events/create", {
+      let res = await fetch("/api/s3/upload", {
+        method: "POST",
+        body: JSON.stringify({
+          name: file.name
+        })
+      })
+      let ret = await res.json()
+
+      let url = ret.signedURL
+      res = await fetch(url, {method: "PUT", body: file})
+
+      res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/events/create", {
         method: "POST",
         body: JSON.stringify({
           title,
           desc,
           location,
-          eventTime
-        }),
+          eventTime,
+          image: file.name
+        })
       });
+
       if (res.status === 200) {
         // clear inputs
         setDesc("");
         setTitle("");
         setLocation("");
         setEventTime("");
+        setFile(null)
 
         router.push("/events")
-        // toast({
-        //   title: "Review Submitted",
-        //   description: "View your review on the reviews page.",
-        //   status: 'success',
-        //   duration: 5000,
-        //   isCloseable: true
-        // })
       }
     } catch (err) {
       console.log(err);
@@ -93,6 +105,15 @@ const CreateEvent = () => {
             onChange={(e)=> setEventTime(e.target.value)}
             value={eventTime}
             my={1}
+            required
+          />
+          <Text>Upload a <b>landscape</b> image to feature!</Text>
+          <Input
+            type={'file'}
+            bg={'white'}
+            p={1}
+            my={1}
+            onChange={(e) => storeFile(e)}
             required
           />
           <Textarea
