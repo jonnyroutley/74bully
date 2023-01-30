@@ -326,7 +326,7 @@ def send_refund():
 
   html = html.replace('=name=', name)
   html = html.replace('=email=', email)
-  html = html.replace('=type=', ticket_type)
+  html = html.replace('=type=', ticket_tiype)
   html = html.replace('=number=', num_tickets)
   html = html.replace('=reason=', reason)
   html = str(html)
