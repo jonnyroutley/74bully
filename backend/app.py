@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import datetime, timedelta
 from library import parse_times
 from dotenv import load_dotenv
 import json
@@ -553,9 +553,11 @@ def delete_event(event_id):
   db.session.commit()
   return f'Deleted event: {event_id}', 200
 
-@app.route('/reading/', methods=['GET'])
-def get_readings():
-  readings = Reading.query.order_by(Reading.epoch).all()
+@app.route('/reading/<int:offset>', methods=['GET'])
+def get_readings(offset):
+  hrs24 = datetime.now() - timedelta(hours=offset)
+  hrs24 = hrs24.timestamp()
+  readings = Reading.query.order_by(Reading.epoch).filter(Reading.epoch >= hrs24)
   readingschema = ReadingSchema(many=True)
   output = readingschema.dump(readings)
 

@@ -1,4 +1,4 @@
-import { Heading, Box, Spinner, Center, Text } from "@chakra-ui/react"
+import { Heading, Box, Spinner, Center, Text, Select } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
 import { Line } from 'react-chartjs-2';
@@ -86,9 +86,10 @@ const Temperature = () => {
   const [temp_and_humid, setTempAndHumid] = useState({datasets:[]})
   const [location, setLocation] = useState("")
   const [loading, setLoading] = useState(true)
+  const [hours, setHours] = useState(24)
 
   const fetchData = async () => {
-    let res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/reading/');
+    let res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/reading/' + String(hours));
     let data = await res.json()
     setLocation(data.location)
 
@@ -123,13 +124,19 @@ const Temperature = () => {
 
   useEffect(() => {
    fetchData() 
-  }, [])
+  }, [hours])
+
 
   return (
     <Layout metas={{title: "House Readings"}}>
       <Box w='xl' maxW={'100%'} my={5} p={2}>
         <Heading>Temperature Readings</Heading>
         <Text>Temperature and humidity readings taken at 1 minute resolution</Text>
+        <Select placeholder='Select Time' value={hours} bg={'white'} my={5} onChange={(e) => setHours(e.target.value)}>
+          <option value={24}>24 Hours</option>
+          <option value={48}>48 Hours</option>
+          <option value={168}>Last week</option>
+        </Select>
         {loading ? 
           <Center>
             <Spinner m={6} size='lg'/>
