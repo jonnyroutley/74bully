@@ -535,10 +535,9 @@ def get_events():
   """
   future_events = Event.query.order_by(Event.time_and_date.asc()).filter(db.func.datetime(Event.time_and_date) >= datetime.today()).all()
   past_events = Event.query.order_by(Event.time_and_date.desc()).filter(db.func.datetime(Event.time_and_date) < datetime.today()).all()
-  print(past_events)
-  task_schema = EventSchema(many=True)
-  future = task_schema.dump(future_events)
-  past = task_schema.dump(past_events)
+  event_schema = EventSchema(many=True)
+  future = event_schema.dump(future_events)
+  past = event_schema.dump(past_events)
 
   return {'future_events': future, 'past_events': past}
 
