@@ -1,12 +1,10 @@
 import { Heading, Box, Text, SkeletonText, Flex, Divider, Avatar, Input } from "@chakra-ui/react"
 import { ChatIcon, AddIcon } from "@chakra-ui/icons"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
-import { useRouter } from 'next/router'
 
-const AddComment = ({event_id, fetchData, setEvents, setLoading}) => {
+const AddComment = ({event_id, fetchData}) => {
   const [comment, setComment] = useState("")
-  const router = useRouter()
 
   const SubmitComment = async () => {
     if (comment == "") return
@@ -21,7 +19,6 @@ const AddComment = ({event_id, fetchData, setEvents, setLoading}) => {
       if (res.status === 200) {
         setComment("");
         fetchData()
-        // router.reload(window.location.pathname)
       }
     } catch (err) {
       console.log(err);
@@ -29,9 +26,9 @@ const AddComment = ({event_id, fetchData, setEvents, setLoading}) => {
   }
 
   return (
-    <Flex gap={2} alignItems={'center'}>
+    <Flex gap={3} alignItems={'center'} mt={2}>
       <Input type="text" placeholder={'New Comment'} value={comment} onChange={(e) => setComment(e.target.value)}/>
-      <AddIcon onClick={() => SubmitComment()}/>
+      <AddIcon onClick={() => SubmitComment()} cursor={'pointer'}/>
     </Flex>
   )
 }
@@ -41,7 +38,7 @@ const Comments = ({comments}) => {
   return (
     <Box bg={'gray.100'} p={3} borderRadius={'md'} mt={2}>
       {comments.map((comment) => (
-        <Flex alignItems={'center'} py={1}>
+        <Flex alignItems={'center'} py={1} key={comment.id}>
           <Avatar name={comment.person}  width={25} height={25} mr={2}/>
           <Text bg={'gray.300'} px={2} py={0.5} borderRadius={'xl'} pb={1}>{comment.content}</Text>
         </Flex>
@@ -56,7 +53,7 @@ const MetaSection = ({comments}) => {
   return (
     <>
     <Divider my={2}/>
-    <Flex alignItems={'center'} direction={'row'} gap={2} onClick={() => setShowComments(!showComments)}>
+    <Flex alignItems={'center'} direction={'row'} gap={2} onClick={() => setShowComments(!showComments)} cursor={'pointer'}>
       <ChatIcon />
       <Text>
         {comments.length}
@@ -67,7 +64,7 @@ const MetaSection = ({comments}) => {
   )
 }
 
-const Event = ({event}) => {
+const Event = ({event, fetchData}) => {
   const formatDateTime = (dt) => {
     const today = new Date(dt)
     return new Intl.DateTimeFormat('en-GB', {year: 'numeric', month: '2-digit',day: '2-digit', hour: 'numeric', minute: 'numeric'}).format(today)
@@ -83,7 +80,7 @@ const Event = ({event}) => {
           <Text>Time and Date: {formatDateTime(event.time_and_date)}</Text>
           <Text>Location: {event.location}</Text>
           <MetaSection comments={event.comments} />
-          <AddComment event_id={event.id}/>
+          <AddComment event_id={event.id} fetchData={fetchData}/>
         </Box>
       </Box>
     )
@@ -95,7 +92,7 @@ const Event = ({event}) => {
         <Text>Time and Date: {formatDateTime(event.time_and_date)}</Text>
         <Text>Location: {event.location}</Text>
         <MetaSection comments={event.comments} />
-        <AddComment event_id={event.id}/>
+        <AddComment event_id={event.id} fetchData={fetchData}/>
       </Box>
     )
   }
@@ -135,6 +132,7 @@ const Events = () => {
             <Event
               key={event.id}
               event={event}
+              fetchData={fetchData}
             />
           ))}
           <Heading mb={2} mt={3} size={'md'}>Past</Heading>
@@ -143,8 +141,6 @@ const Events = () => {
               key={event.id}
               event={event}
               fetchData={fetchData}
-              setEvents={setEvents}
-              setLoading={setLoading}
             />
           ))}
         </Box>
