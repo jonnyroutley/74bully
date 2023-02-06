@@ -50,4 +50,10 @@ To activate the env:
 env/Scripts/activate
 ```
 
+UPDATE YOUR REMOTES!
+
+```bash
+git remote set-url origin https://github.com/jonnyroutley/74bully.git
+```
+
 You must install the vscode extension PyLint to use the `.pylintrc` file for linting.
