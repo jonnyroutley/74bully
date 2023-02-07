@@ -1,4 +1,4 @@
-import { Button, Heading, Box, Spinner, Center, Text, Input, Select, useRadio, useRadioGroup, useToast, Image, FormLabel, Textarea } from "@chakra-ui/react"
+import { Button, Heading, Box, Text, Input, Select, useRadio, useRadioGroup, useToast, Image, FormLabel, Textarea } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import Layout from "../layout/layout"
 
@@ -26,6 +26,7 @@ const Announcements = () => {
   const [senders, setSenders] = useState([])
   const [loading, setLoading] = useState(true)
   const [sender, setSender] = useState("")
+  const [other, setOther] = useState("")
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -34,6 +35,7 @@ const Announcements = () => {
   const fetchSenders = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/announcements/senders');
     let data = await res.json()
+    data.senders.push("other")
     setSenders(data.senders)
     setLoading(false)
   }
@@ -50,10 +52,14 @@ const Announcements = () => {
     e.preventDefault()
     try {
       setIsSubmitting(true)
+      let final_sender = sender
+      if (final_sender == "other") {
+        final_sender = other
+      }
       let res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/announcements", {
         method: "POST",
         body: JSON.stringify({
-          sender,
+          sender: final_sender,
           title,
           message,
           icon
@@ -128,6 +134,19 @@ const Announcements = () => {
               <option key={sender} value={sender}>{sender}</option>
             ))}
           </Select>
+          {(sender == "other") &&
+            <Input
+              type="text"
+              name="other"
+              id="other"
+              bg={'white'}
+              onChange={(e) => setOther(e.target.value)}
+              value={other}
+              placeholder={"Your Name"}
+              my={1}
+              required
+            />
+          }
           <Input
             type="text"
             name="title"

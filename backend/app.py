@@ -497,7 +497,7 @@ def announcement():
 
 @app.route('/announcements/senders/', methods=['GET'])
 def senders():
-  senders_list = ['Jonny', 'Fraser', 'Doug', 'Mia', 'Sam']
+  senders_list = ['Jonny', 'Fraser', 'Doug', 'Mia']
   return {'senders': senders_list}
 
 @app.route('/bins/', methods=['GET'])
