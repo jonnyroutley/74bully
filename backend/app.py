@@ -75,6 +75,7 @@ class Rating(db.Model):
     return r'<Item {self.id}>'
 
 class Event(db.Model):
+  __tablename__ = 'event'
   id = db.Column(db.Integer, primary_key=True)
   title = db.Column(db.String(500), nullable=False)
   desc = db.Column(db.String(1000), nullable=False)
@@ -83,9 +84,23 @@ class Event(db.Model):
   feature = db.Column(db.String(400), nullable=True)
   date_created = db.Column(db.DateTime, default=datetime.utcnow)
   date_updated = db.Column(db.DateTime, default=datetime.utcnow)
+  comments = db.relationship('EventComment', back_populates='event')
 
   def __repr__(self):
     return r'<Item {self.id}>'
+
+class EventComment(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
+  person = db.Column(db.String(200), nullable=True)
+  content = db.Column(db.String(1000), nullable=False)
+  archived = db.Column(db.Boolean, nullable=False, default=False)
+  date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+  event = db.relationship('Event', back_populates='comments')
+
+  def __repr__(self):
+    return r'<Comment {self.id}>'
 
 class Reading(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -99,9 +114,14 @@ class ShoppingItemSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
     model = ShoppingItem
 
+class EventCommentSchema(ma.SQLAlchemyAutoSchema):
+  class Meta:
+    model = EventComment
 class EventSchema(ma.SQLAlchemyAutoSchema):
+  comments = ma.Nested(EventCommentSchema, many=True)
   class Meta:
     model = Event
+    load_instance = True
 
 class RatingSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
@@ -515,10 +535,9 @@ def get_events():
   """
   future_events = Event.query.order_by(Event.time_and_date.asc()).filter(db.func.datetime(Event.time_and_date) >= datetime.today()).all()
   past_events = Event.query.order_by(Event.time_and_date.desc()).filter(db.func.datetime(Event.time_and_date) < datetime.today()).all()
-  task_schema = EventSchema(many=True)
-  future = task_schema.dump(future_events)
-  past = task_schema.dump(past_events)
-
+  event_schema = EventSchema(many=True)
+  future = event_schema.dump(future_events)
+  past = event_schema.dump(past_events)
 
   return {'future_events': future, 'past_events': past}
 
@@ -552,6 +571,29 @@ def delete_event(event_id):
   db.session.delete(event)
   db.session.commit()
   return f'Deleted event: {event_id}', 200
+
+@app.route("/events/comment/create/<int:event_id>", methods=['POST'])
+def create_commend(event_id):
+  event = Event.query.get_or_404(event_id)
+  if not event: return 'Event not found', 404
+
+  data = request.get_data()
+  data = json.loads(data)
+
+  person = data['person']
+  content = data['content']
+
+  new_comment = EventComment(person=person, content=content, event_id=event_id)
+
+  try:
+    db.session.add(new_comment)
+    db.session.commit()
+
+    return 'Comment Added', 200
+
+  except Exception:
+    return 'Issue adding that comment', 500
+
 
 @app.route('/reading/<int:offset>', methods=['GET'])
 def get_readings(offset):
