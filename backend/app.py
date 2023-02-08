@@ -109,6 +109,12 @@ class Reading(db.Model):
   humidity = db.Column(db.Float, nullable=False)
   epoch = db.Column(db.Float, nullable=False)
 
+class Pee(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(200), nullable=False)
+  comment = db.Column(db.String(1000), nullable=True)
+  date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
 # Create a Schema to be used by marrshmallow for serialisation
 class ShoppingItemSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
@@ -126,6 +132,10 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
 class RatingSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
     model = Rating
+
+class PeeSchema(ma.SQLAlchemyAutoSchema):
+  class Meta:
+    model = Pee
     
 class ReadingSchema(ma.SQLAlchemyAutoSchema):
   class Meta:
@@ -495,10 +505,10 @@ def announcement():
     logging.exception(e)
     return 'Bad', 500
 
-@app.route('/announcements/senders/', methods=['GET'])
+@app.route('/dwellers/', methods=['GET'])
 def senders():
   senders_list = ['Jonny', 'Fraser', 'Doug', 'Mia']
-  return {'senders': senders_list}
+  return {'dwellers': senders_list}
 
 @app.route('/bins/', methods=['GET'])
 def bindicator():
@@ -647,7 +657,31 @@ def set_location():
     f.write(loc)
   return f'Location set to {loc}', 200
 
-# @app.route()
+@app.route('/urinations', methods=['GET', 'POST'])
+def add_urinate_record():
+  if request.method == 'POST':
+    data = request.get_data()
+    data = json.loads(data)
+    name = data['name']
+    comment = data['comment']
+
+    pee = Pee(name=name, comment=comment)
+
+    try:
+      db.session.add(pee)
+      db.session.commit()
+      return 'Added new record of pee', 200
+    except Exception as e:
+      logging.error('Failed to record pee.')
+      logging.exception(e)
+      return 'Issue recording your pee', 500
+  
+  elif request.method == 'GET':
+    pees = Pee.query.order_by(Pee.date_created)
+    peeschema = PeeSchema(many=True)
+    output = peeschema.dump(pees)
+
+    return {'urinations': output}, 200
 
 if __name__ == '__main__':
   app.run(debug=True)
