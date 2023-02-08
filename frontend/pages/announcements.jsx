@@ -33,10 +33,10 @@ const Announcements = () => {
   const [icon, setIcon] = useState("1")
 
   const fetchSenders = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/announcements/senders');
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/dwellers');
     let data = await res.json()
-    data.senders.push("other")
-    setSenders(data.senders)
+    data.dwellers.push("other")
+    setSenders(data.dwellers)
     setLoading(false)
   }
 
