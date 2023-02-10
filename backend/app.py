@@ -604,7 +604,6 @@ def create_commend(event_id):
   except Exception:
     return 'Issue adding that comment', 500
 
-
 @app.route('/reading/<int:offset>', methods=['GET'])
 def get_readings(offset):
   hrs24 = datetime.now() - timedelta(hours=offset)
