@@ -77,7 +77,7 @@ const Event = ({event, fetchData}) => {
         <Box p={6}>
           <Heading size={'md'}>{event.title}</Heading>
           <Heading size={'sm'} fontWeight={400} mb={3} as={'i'}>{event.desc}</Heading>
-          <Text>Time and Date: {formatDateTime(event.time_and_date)}</Text>
+          <Text mt={3}>Time and Date: {formatDateTime(event.time_and_date)}</Text>
           <Text>Location: {event.location}</Text>
           <MetaSection comments={event.comments} />
           <AddComment event_id={event.id} fetchData={fetchData}/>

@@ -87,11 +87,13 @@ const Temperature = () => {
   const [location, setLocation] = useState("")
   const [loading, setLoading] = useState(true)
   const [hours, setHours] = useState(24)
+  const [currentTemp, setCurrentTemp] = useState(0)
 
   const fetchData = async () => {
     let res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/reading/' + String(hours));
     let data = await res.json()
     setLocation(data.location)
+    setCurrentTemp(data.temperatures[data.temperatures.length - 1])
 
     setTempAndHumid({
       labels: data.dates,
@@ -143,6 +145,7 @@ const Temperature = () => {
           </Center>
           :
           <>
+          <Heading>It's {currentTemp}°C</Heading>
           <Text>Locations: {location}</Text>
           <Box bg='white' p={4} borderRadius={'lg'} h={'70vh'} mt={3}>
           <Line
