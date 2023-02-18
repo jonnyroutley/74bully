@@ -89,8 +89,8 @@ class Bins:
       # return 1 if notification is sent else 0
       return 1
 
-    notifications.send_notification("All Good My G",
-      "Give yourself a pat on the back", 15, True)
+    # notifications.send_notification("All Good My G",
+    #  "Give yourself a pat on the back", 15, True)
     return 0
 
 def get_bin_data():
