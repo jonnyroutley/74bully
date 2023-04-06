@@ -18,13 +18,6 @@ import notifications
 import logging
 import requests
 import trash
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.utils import formataddr
-from pdfgenerator import generate_pdf
-import smtplib
-import ssl
 
 load_dotenv()
 
@@ -163,19 +156,6 @@ def update_bin_file():
     json.dump(bin_dict, bin_file)
 
   return bin_data
-
-def send_email(sender, receiver, msg):
-
-  email_username= os.getenv('EMAIL_USER')
-  email_pass = os.getenv('EMAIL_PASS')
-
-  context = ssl.create_default_context()
-
-  with smtplib.SMTP_SSL('mail.exetercollegeball.co.uk', 465, context=context) as server:
-    server.login(email_username, email_pass)
-    server.sendmail(sender, receiver, msg.as_string())
-    logging.info('Sent mail to %s', receiver)
-    server.quit()
 
 def older_than_a_week(dt):
   d = datetime.strptime(dt)
@@ -340,149 +320,6 @@ def libraries():
     library_data.append(temp)
 
   return {'libraries' : library_data}
-
-@app.route('/ball/refund', methods=['POST'])
-def send_refund():
-  data = request.get_data()
-  data = json.loads(data)
-  name = data['name']
-  email = data['email']
-  ticket_type = data['ticket']
-  num_tickets = data['no_ticket']
-  reason = data['reason']
-
-  with open('static/refund_email.html', encoding='UTF-8') as f:
-    html = f.read()
-
-  html = html.replace('=name=', name)
-  html = html.replace('=email=', email)
-  html = html.replace('=type=', ticket_type)
-  html = html.replace('=number=', num_tickets)
-  html = html.replace('=reason=', reason)
-  html = str(html)
-
-  sender = 'no-reply@exetercollegeball.co.uk'
-  recipients = ['fraser.rennie@exeter.ox.ac.uk', 'anna.barrett@exeter.ox.ac.uk']
-
-  text = """\
-  Dear user,
-  Something has gone wrong (500).
-  Many Thanks,
-  Menu Sender"""
-
-  msg = MIMEMultipart('alternative')
-  msg['From'] = formataddr(('Exeter College Ball', sender))
-  msg['To'] = ', '.join(recipients)
-  msg['Subject'] = 'Ticket Refund Request'
-
-  part1 = MIMEText(text, 'plain')
-  part2 = MIMEText(html, 'html')
-
-  msg.attach(part1)
-  msg.attach(part2)
-
-  send_email(sender, recipients, msg)
-
-  # Send notification to user
-
-  with open('static/refund_email_return.html', encoding='UTF-8') as f:
-    html2 = f.read()
-
-  html2 = html2.replace('=name=', name)
-
-  msg2 = MIMEMultipart('alternative')
-  msg2['From'] = formataddr(('Exeter College Ball', sender))
-  msg2['To'] = email
-  msg2['Subject'] = 'Ticket Refund Request'
-
-  part3 = MIMEText(text, 'plain')
-  part4 = MIMEText(html2, 'html')
-
-  msg2.attach(part3)
-  msg2.attach(part4)
-
-  send_email(sender, email, msg2)
-
-  return 'Sent Refund Request', 200
-
-@app.route('/ball/access', methods=['POST'])
-def send_access():
-  data = request.get_data()
-  data = json.loads(data)
-  fname = data['fname']
-  lname = data['lname']
-  email = data['email']
-  additional = data['additional']
-  year = data['year']
-  subject = data['subject']
-  priority = data['priority']
-
-  file_name = generate_pdf(fname, lname, email, additional, year, subject, int(priority))
-
-  with open('static/access_email.html', encoding='UTF-8') as f:
-    html = f.read()
-
-  html = html.replace('{{fname}}', fname)
-  html = html.replace('{{lname}}', lname)
-  html = html.replace('{{email}}', email)
-  html = html.replace('{{year}}', year)
-  html = html.replace('{{subject}}', subject)
-
-  sender = 'no-reply@exetercollegeball.co.uk'
-  receiver = 'anna.barrett@exeter.ox.ac.uk'
-
-  text = """\
-  Dear user,
-  Something has gone wrong (500).
-  Many Thanks,
-  Menu Sender"""
-
-  msg = MIMEMultipart('alternative')
-  msg['From'] = formataddr(('Exeter College Ball', sender))
-  msg['To'] = receiver
-  msg['Subject'] = 'Student Access Ticket Request'
-
-  part1 = MIMEText(text, 'plain')
-  part2 = MIMEText(html, 'html')
-
-  with open(file_name, 'rb') as f:
-    #attach = email.mime.application.MIMEApplication(f.read(),_subtype="pdf")
-    attach = MIMEApplication(f.read(),_subtype='pdf')
-  attach.add_header('Content-Disposition','attachment',filename=str(file_name))
-  msg.attach(attach)
-
-  msg.attach(part1)
-  msg.attach(part2)
-
-  send_email(sender, receiver, msg)
-
-  # Now send to person who filled out form.
-
-  with open('static/access_email_return.html', encoding='UTF-8') as f:
-    html2 = f.read()
-
-  html2 = html2.replace('{{fname}}', fname)
-
-  msg2 = MIMEMultipart('alternative')
-  msg2['From'] = formataddr(('Exeter College Ball', sender))
-  msg2['To'] = email
-  msg2['Subject'] = 'Student Access Ticket Request'
-
-  part3 = MIMEText(text, 'plain')
-  part4 = MIMEText(html2, 'html')
-
-  with open(file_name, 'rb') as f:
-    #attach = email.mime.application.MIMEApplication(f.read(),_subtype="pdf")
-    attach = MIMEApplication(f.read(),_subtype='pdf')
-  attach.add_header('Content-Disposition','attachment',filename=str(file_name))
-  msg2.attach(attach)
-
-  msg2.attach(part3)
-  msg2.attach(part4)
-
-  send_email(sender, email, msg2)
-
-  return 'Sent PDF', 200
 
 @app.route('/houserules/')
 def houserules():
