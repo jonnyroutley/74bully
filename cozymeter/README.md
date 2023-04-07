@@ -32,3 +32,62 @@ Then create a cron job
 crontab -e
 * * * * * ~/74bully/cozymeter/reading.sh
 ```
+
+## LCD 1602
+
+Some nice reading on the topic <3:
+
+[Specification](https://www.openhacks.com/uploadsproductos/eone-1602a1.pdf)
+
+## Running the display as a system process
+
+Uses `systemd` to run.
+
+Make a service:
+
+```bash
+sudo vim /etc/systemd/system/cozymeter.service
+```
+
+```
+[Unit]
+Description=Cozymeter for LCD
+After=multi-user.target
+[Service]
+Type=simple
+Restart=always
+ExecStart=/home/fraser/74bully/cozymeter/env/bin/python /home/fraser/74bully/cozymeter/cozymeter.py
+[Install]
+WantedBy=multi-user.target
+```
+
+Now run the following commands:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable cozymeter.service
+sudo systemctl start test.service
+```
+
+The service is now running. It will restart upon failure although failure is probs bad since we handle `RuntimeError` so an `Exception` is probably not recoverable.
+
+### Extra commands
+
+```bash
+sudo systemctl stop cozymeter.service
+sudo systemctl restart cozymeter.service
+sudo systemctl status cozymeter.service
+```
+
+Wanna check the `syslogs`? I bet you do:
+
+```bash
+vim /var/log/syslog
+```
+
+And quit without saving is `:q!` if you forget you silly person xxx.
+
+### Reading
+
+- [Simple tutorial](https://medium.com/codex/setup-a-python-script-as-a-service-through-systemctl-systemd-f0cc55a42267)
+- [In depth reading](https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units)
