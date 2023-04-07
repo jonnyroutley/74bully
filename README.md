@@ -15,45 +15,17 @@ Project to make a house dashboard using Flask
 
 - [ ] Use Chakra-ui themes
 - [x] Change announcement notification icon in pushsafer
-- [ ] Update rules
+- [x] Update rules
 - [x] Add bins page
 - [ ] Update links on index page/make animals buttons
 - [ ] Make generally more gaudy
 - [x] Add website ratings page. Stars and comment.
-- [ ] Events Page
-  - [ ] BBQ
-  - [ ] Dinner
-
-## Development
-
-If you have install more dependencies, you must add them to the `requirements.txt` file
-
-```bash
-python -m pip freeze > requirements.txt
-```
-
-To install requirements into your venv:
-
-```bash
-pip install -r requirements.txt
-```
-
-To create a venv (here we create a virtual environment called `env`)
-
-```bash
-python -m venv env
-```
-
-To activate the env:
-
-```bash
-env/Scripts/activate
-```
+- [x] Events Page
+  - [x] BBQ
+  - [x] Dinner
 
 UPDATE YOUR REMOTES!
 
 ```bash
 git remote set-url origin https://github.com/jonnyroutley/74bully.git
 ```
-
-You must install the vscode extension PyLint to use the `.pylintrc` file for linting.
