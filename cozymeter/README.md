@@ -66,7 +66,7 @@ Now run the following commands:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable cozymeter.service
-sudo systemctl start test.service
+sudo systemctl start cozymeter.service
 ```
 
 The service is now running. It will restart upon failure although failure is probs bad since we handle `RuntimeError` so an `Exception` is probably not recoverable.
