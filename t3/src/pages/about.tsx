@@ -132,6 +132,13 @@ const Reviews = () => {
                     height={300}
                     className="border-8 border-amber-300 shadow-xl"
                   />
+                  <Image
+                    src="/fraser.png"
+                    alt="Fraser"
+                    width={80}
+                    height={80}
+                    className="absolute ml-24 mt-36 opacity-90 rounded-full"
+                  />
                   <div className="mx-2 flex flex-row justify-between bg-gradient-to-r from-[#D0AE31] to-[#FFE292] px-2 py-1 text-xs font-bold italic">
                     <p>{housemate.type} Pokemon</p>
                     <p>Length: {housemate.height}</p>
