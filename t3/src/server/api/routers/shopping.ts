@@ -24,6 +24,39 @@ export const shoppingRouter = createTRPCRouter({
         },
       });
     }),
+
+  delete: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.shoppingItems.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
+
+  update: publicProcedure
+    .input(z.object({ id: z.string(), completed: z.boolean() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.shoppingItems.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          completed: input.completed
+        }
+      });
+    }),
+
+  create: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.shoppingItems.create({
+        data: {
+          name: input.name
+        }
+      })
+    }),
 })
 
 
