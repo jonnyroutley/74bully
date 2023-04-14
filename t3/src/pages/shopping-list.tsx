@@ -91,7 +91,7 @@ const ShoppingList = () => {
                     <button
                       onClick={() => updateItem(item.id, !item.completed)}
                     >
-                      {item.completed ? (
+                      {!item.completed ? (
                         <p className="flex flex-row rounded-md bg-blue-400 hover:bg-blue-500 text-white px-2 text-xs font-semibold">
                           <CheckIcon className="h-4 w-4" />
                           Complete

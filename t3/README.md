@@ -1,5 +1,18 @@
 # Create T3 App
 
+## DB stuff:
+Create .env and put:
+```
+DATABASE_URL="mysql://root@127.0.0.1:3309/house"
+```
+
+Run
+```
+pscale connect house development --port 3309
+```
+
+
+
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
 ## What's next? How do I make an app with this?
